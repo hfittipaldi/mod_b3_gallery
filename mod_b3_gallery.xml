@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.2" client="site" method="upgrade">
+    <name>B3 Gallery Module</name>
+    <author>Hugo Fittipaldi</author>
+    <creationDate>May 2016</creationDate>
+    <copyright>Copyright (C) 2016 Hugo Fittipaldi. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <authorEmail>hugo.fittipaldi@gmail.com</authorEmail>
+    <version>1.0</version>
+    <description>Place a Bootstrap 3 gallery in a module position.</description>
+    <files>
+        <filename>mod_b3_gallery.xml</filename>
+        <filename module="mod_b3_gallery">mod_b3_gallery.php</filename>
+        <filename>helper.php</filename>
+        <filename>index.html</filename>
+        <folder>tmpl</folder>
+    </files>
+
+    <media destination="mod_b3_gallery" folder="media">
+        <file>index.html</file>
+        <folder>css</folder>
+    </media>
+
+    <config>
+		<fields name="params">
+			<fieldset name="basic">
+                <field name="folder"
+                       type="folderlist"
+                       label="Folder Name"
+                       description="Please type the folder for the images in the media manager"
+                       class="inputbox"
+                       directory="images"
+                       required="true"
+                       default="" />
+				<field name="size"
+                       type="text"
+                       label="Thumbnail size"
+                       description="Maximun heigh/width of the thumbnail ('px' is not needed)"
+                       size="40"
+                       class="inputbox"
+                       required="true"
+                       default="150" />
+
+                <field name="myspacer"
+                       type="spacer"
+                       hr="true" />
+
+                <field name="thumbnail"
+                       type="radio"
+                       class="btn-group btn-group-yesno radio"
+                       default="1"
+                       label="Create thumbs"
+                       description="Choose No if you will create your own thumbs.">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+			</fieldset>
+
+            <fieldset name="modal" label="Modal Options">
+                <field name="autoslide"
+                       type="radio"
+                       class="btn-group btn-group-yesno radio"
+                       default="1"
+                       label="Auto slide"
+                       description="If no, carousel will not automatically cycle.">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="transition"
+                       type="list"
+                       default="0"
+                       label="Transition"
+                       description="Image transition">
+                    <option value="0">Default</option>
+                    <option value="1">Fade</option>
+                </field>
+                <field name="interval"
+                       type="text"
+                       default="5000"
+                       label="Interval"
+                       description="The amount of time to delay between automatically cycling an item." />
+
+                <field name="indicators"
+                       type="radio"
+                       class="btn-group btn-group-yesno radio"
+                       default="1"
+                       label="Indicators"
+                       description="Turn on or off underside control blobs.">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="controls"
+                       type="radio"
+                       class="btn-group btn-group-yesno radio"
+                       default="1"
+                       label="Left/right controls"
+                       description="Turn on or off left/right buttons.">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="pause"
+                       type="radio"
+                       class="btn-group btn-group-yesno radio"
+                       default="1"
+                       label="Pauses on mouseenter?"
+                       description="Pauses the cycling of the carousel on mouseenter and resumes the cycling of the carousel on mouseleave.">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="wrap"
+                       type="radio"
+                       class="btn-group btn-group-yesno radio"
+                       default="1"
+                       label="Carousel loop"
+                       description="Whether the carousel should cycle continuously or have hard stops.">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="keyboard"
+                       type="radio"
+                       class="btn-group btn-group-yesno radio"
+                       default="1"
+                       label="Keyboard control"
+                       description="Whether the carousel should react to keyboard events.">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+            </fieldset>
+
+            <fieldset name="advanced">
+                <field name="layout"
+                       type="modulelayout"
+                       label="JFIELD_ALT_LAYOUT_LABEL"
+                       description="JFIELD_ALT_MODULE_LAYOUT_DESC" />
+                <field name="moduleclass_sfx"
+                       type="textarea" rows="3"
+                       label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                       description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC" />
+                <field name="cache"
+                       type="list"
+                       default="1"
+                       label="COM_MODULES_FIELD_CACHING_LABEL"
+                       description="COM_MODULES_FIELD_CACHING_DESC">
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+                </field>
+                <field name="cache_time"
+                       type="text"
+                       default="900"
+                       label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                       description="COM_MODULES_FIELD_CACHE_TIME_DESC" />
+                <field name="cachemode"
+                       type="hidden"
+                       default="static">
+                    <option value="static"></option>
+                </field>
+            </fieldset>
+		</fields>
+	</config>
+</extension>
+
