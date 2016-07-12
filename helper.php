@@ -1,14 +1,17 @@
 <?php
 /**
- * @package     Joomla.site
+ * B3 Gallery Module
+ *
+ * @package     Joomla.Site
  * @subpackage  mod_b3_gallery
  *
  * @author      Hugo Fittipaldi <hugo.fittipaldi@gmail.com>
  * @copyright   Copyright (C) 2016 Hugo Fittipaldi. All rights reserved.
  * @license     GNU General Public License version 2 or later;
+ * @link        https://github.com/hfittipaldi/mod_b3_gallery
  */
 
-//No Direct Access
+// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.filter.filteroutput');

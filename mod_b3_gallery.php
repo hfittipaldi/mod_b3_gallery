@@ -1,15 +1,18 @@
 <?php
 /**
- * @package     Joomla.site
+ * B3 Gallery Module
+ *
+ * @package     Joomla.Site
  * @subpackage  mod_b3_gallery
  *
  * @author      Hugo Fittipaldi <hugo.fittipaldi@gmail.com>
  * @copyright   Copyright (C) 2016 Hugo Fittipaldi. All rights reserved.
  * @license     GNU General Public License version 2 or later;
+ * @link        https://github.com/hfittipaldi/mod_b3_gallery
  */
 
-//No Direct Access
-defined('_JEXEC') or die;
+// no direct access
+defined( '_JEXEC' ) or die;
 
 // Include the syndicate functions only once
 require_once __DIR__ . '/helper.php';
@@ -50,11 +53,11 @@ $pause           = (int) $params->get('pause') !== 1 ? ' data-pause="false"' : '
 $wrap            = (int) $params->get('wrap') !== 1 ? ' data-wrap="false"' : '';
 $keyboard        = (int) $params->get('keyboard') !== 1 ? ' data-keyboard="false"' : '';
 
-$init = ModB3GalleryHelper::init($dir_name);
+$init = modB3GalleryHelper::init($dir_name);
 
 if ($params->get('thumbnail') == 1)
-    ModB3GalleryHelper::createThumbs($params);
+    modB3GalleryHelper::createThumbs($params);
 
-$images = ModB3GalleryHelper::getImages();
+$images = modB3GalleryHelper::getImages();
 
 require JModuleHelper::getLayoutPath('mod_b3_gallery', $params->get('layout', 'default'));

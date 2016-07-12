@@ -1,17 +1,20 @@
 <?php
 /**
- * @package     Joomla.site
+ * B3 Gallery Module
+ *
+ * @package     Joomla.Site
  * @subpackage  mod_b3_gallery
  *
  * @author      Hugo Fittipaldi <hugo.fittipaldi@gmail.com>
  * @copyright   Copyright (C) 2016 Hugo Fittipaldi. All rights reserved.
  * @license     GNU General Public License version 2 or later;
+ * @link        https://github.com/hfittipaldi/mod_b3_gallery
  */
 
-//No Direct Access
+// no direct access
 defined('_JEXEC') or die;
 ?>
-<div id="b3Carousel">
+<div id="b3Gallery-<?php echo $module_id; ?>" class="b3Gallery">
 
 <?php
 if ($images !== null) :
@@ -22,7 +25,7 @@ if ($images !== null) :
     {
         $base_name = basename($thumb);
 ?>
-        <div data-target="#carousel-<?php echo $module_id; ?>" data-slide-to="<?php echo $k; ?>" style="float:left;">
+        <div data-target="#carousel-<?php echo $module_id; ?>" data-slide-to="<?php echo $k; ?>" class="b3Gallery-item pull-left">
             <a href="#galleryModal-<?php echo $module_id; ?>" class="thumbnail" data-toggle="modal" data-item-id="item-<?php echo $module_id .'-' . $k; ?>">
                 <img src="<?php echo $thumb; ?>" alt="<?php echo $base_name; ?>" />
             </a>
