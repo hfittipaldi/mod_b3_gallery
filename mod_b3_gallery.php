@@ -29,9 +29,9 @@ $dir_name        = $params->get('folder');
 $size            = $params->get('size', 150);
 
 /* Modal params */
-$autoslide       = (int) $params->get('autoslide', 1);
-$interval        = (int) $params->get('interval', 5000);
-$transition      = (int) $params->get('transition', 0);
+$autoslide  = (int) $params->get('autoslide', 1);
+$interval   = (int) $params->get('interval', 5000);
+$transition = (int) $params->get('transition', 0);
 
 if ($transition !== 0)
 {
@@ -43,15 +43,15 @@ else
     $transition = '';
 }
 
-$interval        = $interval !== 5000 ? ' data-interval="' . $interval . '"' : '';
-$interval        = $autoslide !== 0 ? $interval : ' data-interval="false"';
+$interval   = $interval !== 5000 ? ' data-interval="' . $interval . '"' : '';
+$interval   = $autoslide !== 0 ? $interval : ' data-interval="false"';
 
-$indicators      = (int) $params->get('indicators', 1);
-$controls        = (int) $params->get('controls', 1);
+$indicators = (int) $params->get('indicators', 1);
+$controls   = (int) $params->get('controls', 1);
 
-$pause           = (int) $params->get('pause') !== 1 ? ' data-pause="false"' : '';
-$wrap            = (int) $params->get('wrap') !== 1 ? ' data-wrap="false"' : '';
-$keyboard        = (int) $params->get('keyboard') !== 1 ? ' data-keyboard="false"' : '';
+$pause      = (int) $params->get('pause') !== 1 ? ' data-pause="false"' : '';
+$wrap       = (int) $params->get('wrap') !== 1 ? ' data-wrap="false"' : '';
+$keyboard   = (int) $params->get('keyboard') !== 1 ? ' data-keyboard="false"' : '';
 
 $init = modB3GalleryHelper::init($dir_name);
 

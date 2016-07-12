@@ -26,7 +26,7 @@ if ($images !== null) :
         $base_name = basename($thumb);
 ?>
         <div data-target="#carousel-<?php echo $module_id; ?>" data-slide-to="<?php echo $k; ?>" class="b3Gallery-item pull-left">
-            <a href="#galleryModal-<?php echo $module_id; ?>" class="thumbnail" data-toggle="modal" data-item-id="item-<?php echo $module_id .'-' . $k; ?>">
+            <a href="#galleryModal-<?php echo $module_id; ?>" class="thumbnail" data-toggle="modal" data-item-id="item-<?php echo $module_id .'-' . $k; ?>" onclick="getItemIndex(<?php echo $module_id; ?>);">
                 <img src="<?php echo $thumb; ?>" alt="<?php echo $base_name; ?>" />
             </a>
         </div>
@@ -70,7 +70,7 @@ if ($images !== null) :
                 </div>
                 <div class="modal-footer">
 
-                    <div class="pull-left"><span id="counter">1</span> / <?php echo count($files); ?></div>
+                    <div class="pull-left"><span id="counter-<?php echo $module_id; ?>">1</span> / <?php echo count($files); ?></div>
 
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
@@ -79,10 +79,14 @@ if ($images !== null) :
     </div><!-- /.modal -->
 
     <script>
-        jQuery('#carousel-<?php echo $module_id; ?>').on('slid.bs.carousel', function() {
-            var currentIndex = jQuery('div.active').index() + 1;
-            jQuery('#counter').text(currentIndex);
-        });
+        function getItemIndex(id) {
+            var carousel = jQuery('#carousel-' + id);
+            
+            carousel.on('slid.bs.carousel', function() {
+                var currentIndex = jQuery(carousel).find('div.active').index() + 1;
+                jQuery('#counter-'+id).text(currentIndex);
+            });
+        }
     </script>
 
 <?php else : ?>

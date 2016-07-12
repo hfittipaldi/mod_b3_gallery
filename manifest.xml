@@ -1,3 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <updates>
+    <update>
+        <name>B3 Gallery Module</name>
+        <description>Place a Bootstrap 3 gallery in a module position.</description>
+        <element>mod_b3_newsletter</element>
+        <type>module</type>
+        <version>v1.0.0-rc-2</version>
+        <infourl title="B3 Carousel Module URL">https://github.com/hfittipaldi/mod_b3_gallery/releases/tag/v1.0.0-rc-2</infourl>
+        <downloads>
+            <downloadurl type="full" format="zip">https://github.com/hfittipaldi/mod_b3_gallery/releases/download/v1.0.0-rc-2/mod_b3_gallery-v1.0.0-rc-2.zip</downloadurl>
+        </downloads>
+        <tags>
+            <tag>rc</tag>
+        </tags>
+        <maintainer>Hugo Fittipaldi</maintainer>
+        <maintainerurl>https://github.com/hfittipaldi</maintainerurl>
+        <targetplatform name="joomla" version="3.[23456789]" />
+        <client>site</client>
+    </update>
 </updates>
