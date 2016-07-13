@@ -26,7 +26,7 @@ if ($images !== null) :
         $base_name = basename($thumb);
 ?>
         <div data-target="#carousel-<?php echo $module_id; ?>" data-slide-to="<?php echo $k; ?>" class="b3Gallery-item pull-left">
-            <a href="#galleryModal-<?php echo $module_id; ?>" class="thumbnail" data-toggle="modal" data-item-id="item-<?php echo $module_id .'-' . $k; ?>" onclick="getItemIndex(<?php echo $module_id; ?>);">
+            <a href="#galleryModal-<?php echo $module_id; ?>" class="thumbnail" data-toggle="modal" data-item-id="item-<?php echo $module_id .'-' . $k; ?>">
                 <img src="<?php echo $thumb; ?>" alt="<?php echo $base_name; ?>" />
             </a>
         </div>
@@ -79,9 +79,13 @@ if ($images !== null) :
     </div><!-- /.modal -->
 
     <script>
+        jQuery('.b3Gallery-item').find('a').on('click', function() {
+            getItemIndex(<?php echo $module_id; ?>);
+        });
+
         function getItemIndex(id) {
             var carousel = jQuery('#carousel-' + id);
-            
+
             carousel.on('slid.bs.carousel', function() {
                 var currentIndex = jQuery(carousel).find('div.active').index() + 1;
                 jQuery('#counter-'+id).text(currentIndex);
