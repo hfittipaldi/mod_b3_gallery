@@ -6,7 +6,7 @@
     <copyright>Copyright (C) 2016 Hugo Fittipaldi. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later</license>
     <authorEmail>hugo.fittipaldi@gmail.com</authorEmail>
-    <version>v1.0.0-rc-3</version>
+    <version>v1.0.0-rc</version>
     <description>Place a Bootstrap 3 gallery in a module position.</description>
     <files>
         <filename>mod_b3_gallery.xml</filename>

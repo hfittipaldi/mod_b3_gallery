@@ -26,6 +26,7 @@ jimport('joomla.filter.filteroutput');
 class ModB3GalleryHelper
 {
     protected static $dir_name;
+    protected static $extensions;
 
     protected static $fullsize;
     protected static $thumbs;
@@ -36,16 +37,17 @@ class ModB3GalleryHelper
     public static function init($value)
     {
         self::$dir_name   = $value;
+        self::$extensions = '/*.{jpg,jpeg,gif,png}';
 
         self::$imgs_dir   = JPATH_BASE . '/images/' . $value;
         self::$thumbs_dir = JPATH_BASE . '/images/' . $value . '/thumbs';
 
-        self::$fullsize   = glob(self::$imgs_dir.'/*.{jpg,gif,png}', GLOB_BRACE);
-        self::$thumbs     = glob(self::$thumbs_dir.'/*.{jpg,gif,png}', GLOB_BRACE);
+        self::$fullsize   = glob(self::$imgs_dir . self::$extensions, GLOB_BRACE);
+        self::$thumbs     = glob(self::$thumbs_dir . self::$extensions, GLOB_BRACE);
     }
 
 	/**
-	 * Retrieve a list of images
+	 * Retrieve the list of images
 	 *
      * @return  array
      *
@@ -54,17 +56,7 @@ class ModB3GalleryHelper
     public static function getImages()
     {
         // Checks if there is any image in the directory
-        $images = self::_checkImages();
-
-        if ($images === null)
-            return null;
-
-        $images = array(
-            'fullsize' => glob('images/' . self::$dir_name .'/*.{jpg,gif,png}', GLOB_BRACE),
-            'thumbs'   => glob('images/' . self::$dir_name . '/thumbs/*.{jpg,gif,png}', GLOB_BRACE)
-        );
-
-        return $images;
+        return self::_checkImages();
     }
 
     /**
@@ -79,13 +71,13 @@ class ModB3GalleryHelper
     public static function createThumbs($params)
     {
         // Checks if there is any image in the directory
-        $num_imgs = self::_checkImages();
+        $imgs = self::_checkImages();
 
-        if ($num_imgs === null)
+        if ($imgs === null)
             return null;
 
-        $num_thumbs = count(self::$thumbs);
-        $thumb_size = $params->get('size');
+        $num_imgs   = count($imgs['fullsize']);
+        $num_thumbs = count($imgs['thumbs']);
         $diff       = false;
 
         if ($num_imgs !== $num_thumbs)
@@ -95,7 +87,7 @@ class ModB3GalleryHelper
 
         if ($diff === false)
         {
-            $handle = explode('_', basename(self::$thumbs[0]));
+            $handle = explode('_', basename($imgs['thumbs'][0]));
 
             if (strpos($handle[1], $thumb_size) === false)
             {
@@ -107,64 +99,53 @@ class ModB3GalleryHelper
         {
             foreach (self::$fullsize as $key => $image)
             {
-                // 1. Pega as dimensões da imagem de origem
                 list($origem_x, $origem_y) = getimagesize($image);
 
+                // Check if the file is really an image
                 if (is_numeric($origem_x))
                 {
-                    // 2. Lê a imagem de origem
                     $img_origem = imagecreatefromjpeg($image);
 
-                    // 3. Escolhe a largura maior, e se baseando nela mesma, gera a largura menor
-                    if ($origem_x >= $origem_y)
-                    {
-                        // A largura será a do thumbnail
-                        $final_x = $thumb_size;
-
-                        // A altura é calculada
-                        $final_y = floor($thumb_size * $origem_y / $origem_x);
-
-                        // Colar no x = 0
-                        $f_x = 0;
-
-                        // Centralizar a imagem no meio y do thumbnail
-                        $f_y = round(($thumb_size / 2) - ($final_y / 2));
-                    }
-                    else // Se a altura for maior ou igual à largura
-                    {
-                        // Calcula a largura
-                        $final_x = floor($thumb_size * $origem_x / $origem_y);
-
-                        // A altura será a do thumbnail
-                        $final_y = $thumb_size;
-
-                        // Centraliza a imagem no meio x do thumbnail
-                        $f_x = round(($thumb_size / 2) - ($final_x / 2));
-                        $f_y = 0; // Colar no y = 0
-                    }
-
-                    // 4. cria a imagem final para o thumbnail
-                    $img_final = imageCreatetruecolor($thumb_size, $thumb_size);
-
-                    // 5. Define a cor do fundo (branco)
-                    imagefill($img_final, 0, 0, imagecolorallocate($img_final, 255, 255, 255));
-
-                    // 6. Copia a imagem original para dentro do thumbnail
-                    imagecopyresampled($img_final, $img_origem, $f_x, $f_y, 0, 0, $final_x, $final_y, $origem_x, $origem_y);
-
-                    #gerando a a miniatura da imagem
-
-                    //get the name of photo
+                    // Get the name of image and renamed it
                     $old_name   = basename($image);
-                    $new_name   = self::_cleanName($old_name);
-                    $thumb_name = 'thumb_' . $thumb_size . 'x' . $thumb_size . '_' . $new_name;
-
+                    $thumb_name   = self::_cleanName($old_name);
                     rename(self::$imgs_dir.'/'.$old_name, self::$imgs_dir.'/'.$new_name);
 
-                    #o 3º argumento é a qualidade da miniatura de 0 a 100
-                    // 7. Salva o thumbnail
-                    imagejpeg($img_final, self::$thumbs_dir . '/' . $thumb_name, 80);
-                    imagedestroy($img_final);
+                    $filename = self::$thumbs_dir . '/' . $thumb_name;
+
+                    $thumb_size = $params->get('size', 150);
+
+                    // Get the image dimensions
+                    $width = imagesx($img_origem);
+                    $height = imagesy($img_origem);
+
+                    $original_aspect = $width / $height;
+                    $thumb_aspect = 1;
+
+
+                    if ($original_aspect >= $thumb_aspect)
+                    {
+                       // If image is wider than thumbnail (in aspect ratio sense)
+                       $new_height = $thumb_size;
+                       $new_width  = $width / ($height / $thumb_size);
+                    }
+                    else
+                    {
+                       // If the thumbnail is wider than the image
+                       $new_width  = $thumb_size;
+                       $new_height = $height / ($width / $thumb_size);
+                    }
+                    $thumb = imagecreatetruecolor($thumb_size, $thumb_size);
+
+                    // Resize and crop
+                    imagecopyresampled($thumb,
+                                       $img_origem,
+                                       0 - ($new_width - $thumb_size) / 2, // Center the image horizontally
+                                       0 - ($new_height - $thumb_size) / 2, // Center the image vertically
+                                       0, 0,
+                                       $new_width, $new_height,
+                                       $width, $height);
+                    imagejpeg($thumb, $filename, 80);
                 }
             }
         }
@@ -201,13 +182,25 @@ class ModB3GalleryHelper
      */
     private static function _checkImages()
     {
-        $path       = self::_checkPath();
-        $count_imgs = count(self::$fullsize);
+        $path          = self::_checkPath();
+        $fullsize_imgs = glob('images/' . self::$dir_name . self::$extensions, GLOB_BRACE);
+        $count_imgs    = count($fullsize_imgs);
 
-        if ($path === null || $count_imgs === 0)
+        foreach ($fullsize_imgs as $image)
+        {
+            list($width, $height) = getimagesize($image);
+            if (is_numeric($width))
+                $fullsize[] = $image;
+        }
+        $images = array(
+            'fullsize' => $fullsize,
+            'thumbs'   => glob('images/' . self::$dir_name . '/thumbs' . self::$extensions, GLOB_BRACE)
+        );
+
+        if ($path === null || $count_imgs === 0 || count($fullsize) === 0)
             return null;
 
-        return $count_imgs;
+        return $images;
     }
 
     /**
