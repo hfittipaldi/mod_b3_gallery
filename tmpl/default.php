@@ -96,30 +96,8 @@ if ($images !== null) :
 
     <script>
         jQuery('.b3Gallery-item').find('a').on('click', function() {
-            getItemIndex(<?php echo $module_id; ?>);
+            getItemIndex(<?php echo $module_id; ?>, <?php echo $array; ?>);
         });
-
-        function getItemIndex(id) {
-            var carousel = jQuery('#carousel-' + id),
-                width = <?php echo $array; ?>;
-
-            resizeModal(<?php echo $module_id; ?>, width[0]+'px');
-            carousel.on('slid.bs.carousel', function() {
-                var index = jQuery(carousel).find('figure.active').index(),
-                    currentIndex = index + 1,
-                    tam = width[index] + 'px';
-
-                jQuery('#counter-'+id).text(currentIndex);
-
-                resizeModal(<?php echo $module_id; ?>, tam);
-            });
-        }
-
-        function resizeModal(id, w) {
-            jQuery('#galleryModal-' + id).find('.modal-dialog').css({
-                width: w
-            });
-        }
     </script>
 
 <?php else : ?>
