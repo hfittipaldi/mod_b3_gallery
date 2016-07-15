@@ -25,7 +25,17 @@ $module_id = $module->id;
 $mod_title = $module->title;
 
 /* Params */
-$size     = $params->get('size', 150);
+$size      = $params->get('size', 150);
+$bootstrap = $params->get('bootstrap', 1);
+$columns   = $params->get('columns', '');
+
+$row  = '';
+$cols = 'pull-left';
+if ((int)$bootstrap === 1)
+{
+    $row  =  ' row';
+    $cols = $columns !== '' ? $columns : 'col-xs-6 col-sm-4 col-md-3';
+}
 
 /* Modal params */
 $autoslide  = (int) $params->get('autoslide', 1);

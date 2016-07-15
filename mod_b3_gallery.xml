@@ -63,6 +63,21 @@
                        type="spacer"
                        hr="true" />
 
+                <field name="bootstrap"
+                       type="radio"
+                       class="btn-group btn-group-yesno radio"
+                       default="1"
+                       label="Use bootstrap"
+                       description="Use bootstrap columns grid.">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="columns"
+                       type="text"
+                       default="col-xs-6 col-sm-4 col-md-3"
+                       label="Custom columns"
+                       description="Customize bootstrap columns grid." />
+
                 <field name="thumbnail"
                        type="radio"
                        class="btn-group btn-group-yesno radio"

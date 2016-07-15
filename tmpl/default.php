@@ -14,7 +14,7 @@
 // no direct access
 defined('_JEXEC') or die;
 ?>
-<div id="b3Gallery-<?php echo $module_id; ?>" class="b3Gallery">
+<div id="b3Gallery-<?php echo $module_id; ?>" class="b3Gallery<?php echo $row; ?>">
 
 <?php
 if ($images !== null) :
@@ -31,7 +31,7 @@ if ($images !== null) :
     foreach ($thumbs as $k => $thumb)
     {
 ?>
-        <div data-target="#carousel-<?php echo $module_id; ?>" data-slide-to="<?php echo $k; ?>" class="b3Gallery-item pull-left">
+        <div data-target="#carousel-<?php echo $module_id; ?>" data-slide-to="<?php echo $k; ?>" class="b3Gallery-item <?php echo $cols; ?>">
             <a href="#galleryModal-<?php echo $module_id; ?>" class="thumbnail" data-toggle="modal" data-item-id="item-<?php echo $module_id .'-' . $k; ?>">
                 <img src="<?php echo $thumb; ?>" alt="<?php echo $subtitles[$k]; ?>" />
             </a>
