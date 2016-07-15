@@ -12,11 +12,23 @@ function getItemIndex(id, img_width) {
 
         resizeModal(id, tam);
     });
-    return;
 }
 
 function resizeModal(id, tam) {
-    jQuery('#galleryModal-' + id).find('.modal-dialog').css({
-        width: tam
-    });
+    var win_size = viewport(),
+        view = win_size['width'];
+    if (view > 767) {
+        jQuery('#galleryModal-' + id).find('.modal-dialog').css({
+            width: tam
+        });
+    }
+}
+
+function viewport() {
+    var e = window, a = 'inner';
+    if (!('innerWidth' in window )) {
+        a = 'client';
+        e = document.documentElement || document.body;
+    }
+    return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
 }
