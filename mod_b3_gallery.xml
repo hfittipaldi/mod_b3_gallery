@@ -6,7 +6,7 @@
     <copyright>Copyright (C) 2016 Hugo Fittipaldi. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later</license>
     <authorEmail>hugo.fittipaldi@gmail.com</authorEmail>
-    <version>v1.0.0-rc</version>
+    <version>v1.0.0-rc2</version>
     <description>Place a Bootstrap 3 gallery in a module position.</description>
     <files>
         <filename>mod_b3_gallery.xml</filename>
@@ -24,14 +24,39 @@
     <config>
 		<fields name="params">
 			<fieldset name="basic">
-                <field name="folder"
-                       type="folderlist"
-                       label="Folder Name"
-                       description="Please type the folder for the images in the media manager"
-                       class="inputbox"
-                       directory="images"
-                       required="true"
-                       default="" />
+                <field name="images"
+                       type="repeatable"
+                       icon="images"
+                       description="PLG_TINY_FIELD_TEMPLATE_FIELD_ELEMENTS_DESC"
+                       label="Gallery images"
+                       maximum="10"
+                       filter="raw"
+                       default="{'ordering':'','image':'','subtitle':'','thumb':''}">
+                    <fields name="params">
+                        <fieldset hidden="true" name="images_modal" repeat="true">
+                            <field name="ordering"
+                                   type="integer"
+                                   default="1"
+                                   class="input-mini"
+                                   first="1"
+                                   last="10"
+                                   step="1" />
+                            <field name="image"
+                                   type="media"
+                                   preview="tooltip"
+                                   directory="images"
+                                   label="Image"
+                                   description="This is the main image for this slide" />
+                            <field name="subtitle"
+                                   type="text"
+                                   default=""
+                                   label="Image subtitle"
+                                   description="The subtitle of the image" />
+                            <field name="thumb"
+                                   type="hidden" />
+                        </fieldset>
+                    </fields>
+                </field>
 
                 <field name="myspacer"
                        type="spacer"
@@ -41,7 +66,7 @@
                        type="radio"
                        class="btn-group btn-group-yesno radio"
                        default="1"
-                       label="Create thumbs"
+                       label="Auto create thumbs"
                        description="Choose No if you will create your own thumbs.">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>

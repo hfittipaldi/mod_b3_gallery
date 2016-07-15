@@ -26,7 +26,7 @@ jimport('joomla.filter.filteroutput');
 class ModB3GalleryHelper
 {
     protected static $dir_name;
-    protected static $extensions;
+    protected static $extensions = '/*.{jpg,jpeg,gif,png}';
 
     protected static $fullsize;
     protected static $thumbs;
@@ -34,13 +34,12 @@ class ModB3GalleryHelper
     protected static $imgs_dir;
     protected static $thumbs_dir;
 
-    public static function init($value)
+    public static function init($data)
     {
-        self::$dir_name   = $value;
-        self::$extensions = '/*.{jpg,jpeg,gif,png}';
+        self::$dir_name   = self::_getDirName($data);
 
-        self::$imgs_dir   = JPATH_BASE . '/images/' . $value;
-        self::$thumbs_dir = JPATH_BASE . '/images/' . $value . '/thumbs';
+        self::$imgs_dir   = JPATH_BASE . '/images/' . self::$dir_name;
+        self::$thumbs_dir = JPATH_BASE . '/images/' . self::$dir_name . '/thumbs';
 
         self::$fullsize   = glob(self::$imgs_dir . self::$extensions, GLOB_BRACE);
         self::$thumbs     = glob(self::$thumbs_dir . self::$extensions, GLOB_BRACE);
@@ -151,6 +150,113 @@ class ModB3GalleryHelper
         }
 
         return true;
+    }
+
+    /**
+     * Group an object by key
+     *
+     * @param   array  $json An object containing the item data
+     *
+     * @return  mixed
+     *
+     * @since   1.0
+     */
+    public function groupByKey($json)
+    {
+        $imagesJSON = self::_getJSON($json);
+        if ($imagesJSON !== null)
+        {
+            $result = array();
+            foreach ($imagesJSON as $i => $sub)
+            {
+                foreach ($sub as $k => $v)
+                {
+                    $result[$k][$i] = $v;
+                }
+            }
+            $return = self::_columnsList($result);
+
+            if ($return !== null)
+                return $return;
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieves the data in JSON format
+     *
+     * @param   array  $data An object containing the item data
+     *
+     * @return  mixed
+     *
+     * @since   1.0
+     */
+    private function _getJSON($data)
+    {
+        $result = json_decode($data, true);
+
+        if (version_compare(phpversion(), '5.6', '<'))
+        {
+            $result = call_user_func_array('json_decode', func_get_args());
+        }
+
+        if (json_last_error() === JSON_ERROR_NONE)
+            return $result;
+
+        return null;
+    }
+
+    /**
+     * Retrieves the list of columns
+     *
+     * @param   array  $data An object containing the item data
+     *
+     * @return  mixed
+     *
+     * @since   1.0
+     */
+    private function _columnsList($data)
+    {
+        foreach ($data as $key => $row)
+        {
+            $handle = explode('/', $row['image']);
+            $last = array_pop($handle);
+            array_push($handle, 'thumbs' , $last);
+            $thumb = implode('/', $handle);
+
+            $image[$key]    = $row['image'];
+            $ordering[$key] = $row['ordering'];
+
+            $data[$key]['thumb'] = $thumb;
+        }
+
+        // Ordena os dados com ordering ascendente, image ascendente
+        // adiciona $data como o último parâmetro, para ordenar pela chave comum
+        array_multisort($ordering, SORT_ASC, $image, SORT_ASC, $data);
+
+        return $data;
+    }
+
+    /**
+     * Get the image directory
+     *
+     * @return  string
+     *
+     * @since   1.0
+     */
+    private static function _getDirName($data)
+    {
+        $handle = self::_getJSON($data);
+
+        $pieces = explode('/', $handle['image'][0]);
+
+        $first = array_shift($pieces);
+        $last = array_pop($pieces);
+
+        $dir_name = implode('/', $pieces);
+
+        return $dir_name;
     }
 
     /**

@@ -18,16 +18,22 @@ defined('_JEXEC') or die;
 
 <?php
 if ($images !== null) :
-    $files  = $images['fullsize'];
-    $thumbs = $images['thumbs'];
+    $files     = array();
+    $thumbs    = array();
+    $subtitles = array();
+    foreach ($images as $key => $image)
+    {
+        array_push($thumbs, $image['thumb']);
+        array_push($files, $image['image']);
+        array_push($subtitles, $image['subtitle']);
+    }
 
     foreach ($thumbs as $k => $thumb)
     {
-        $base_name = basename($thumb);
 ?>
         <div data-target="#carousel-<?php echo $module_id; ?>" data-slide-to="<?php echo $k; ?>" class="b3Gallery-item pull-left">
             <a href="#galleryModal-<?php echo $module_id; ?>" class="thumbnail" data-toggle="modal" data-item-id="item-<?php echo $module_id .'-' . $k; ?>">
-                <img src="<?php echo $thumb; ?>" alt="<?php echo $base_name; ?>" />
+                <img src="<?php echo $thumb; ?>" alt="<?php echo $subtitles[$k]; ?>" />
             </a>
         </div>
 <?php
@@ -45,14 +51,24 @@ if ($images !== null) :
                     <div id="carousel-<?php echo $module_id; ?>" class="carousel slide<?php echo $transition; ?>" data-ride="carousel"<?php echo $interval . $pause . $wrap . $keyboard; ?>>
                         <!-- Wrapper for slides -->
                         <div class="carousel-inner" role="listbox">
-                            <?php foreach ($files as $k => $file) :
-                                $base_name = basename($file);
+                            <?php
+                                $array = '[';
+                            foreach ($files as $k => $file) :
                                 list($width, $height) = getimagesize($file);
+                                if ($k > 0) $array .= ',';
+                                $array .= $width;
                             ?>
-                            <div class="item-<?php echo $module_id . '-' . $k;?> item<?php echo $k==0 ? ' active' : ''; ?>">
-                                <img src="<?php echo $file; ?>" alt="<?php echo $base_name; ?>" width="<?php echo $width; ?>" height="<?php echo $height; ?>" />
-                            </div>
+                            <figure class="item-<?php echo $module_id . '-' . $k;?> item<?php echo $k==0 ? ' active' : ''; ?>">
+                                <img src="<?php echo $file; ?>" alt="<?php echo $subtitles[$k]; ?>" />
+
+                                <?php if ($subtitles[$k] !== '') : ?>
+                                <figcaption class="carousel-caption">
+                                    <?php echo $subtitles[$k]; ?>
+                                </figcaption>
+                                <?php endif; ?>
+                            </figure>
                             <?php endforeach; ?>
+                            <?php $array .= ']'; ?>
                         </div>
 
                         <?php if ($controls === 1) : ?>
@@ -70,7 +86,7 @@ if ($images !== null) :
                 </div>
                 <div class="modal-footer">
 
-                    <div class="pull-left"><span id="counter-<?php echo $module_id; ?>">1</span> / <?php echo count($files); ?></div>
+                    <div class="pull-left"><span id="counter-<?php echo $module_id; ?>">1</span> / <?php echo count($images); ?></div>
 
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
@@ -84,11 +100,24 @@ if ($images !== null) :
         });
 
         function getItemIndex(id) {
-            var carousel = jQuery('#carousel-' + id);
+            var carousel = jQuery('#carousel-' + id),
+                width = <?php echo $array; ?>;
 
+            resizeModal(<?php echo $module_id; ?>, width[0]+'px');
             carousel.on('slid.bs.carousel', function() {
-                var currentIndex = jQuery(carousel).find('div.active').index() + 1;
+                var index = jQuery(carousel).find('figure.active').index(),
+                    currentIndex = index + 1,
+                    tam = width[index] + 'px';
+
                 jQuery('#counter-'+id).text(currentIndex);
+
+                resizeModal(<?php echo $module_id; ?>, tam);
+            });
+        }
+
+        function resizeModal(id, w) {
+            jQuery('#galleryModal-' + id).find('.modal-dialog').css({
+                width: w
             });
         }
     </script>

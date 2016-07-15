@@ -12,7 +12,7 @@
  */
 
 // no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 // Include the syndicate functions only once
 require_once __DIR__ . '/helper.php';
@@ -24,9 +24,7 @@ $module_id = $module->id;
 $mod_title = $module->title;
 
 /* Params */
-$moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx'));
-$dir_name        = $params->get('folder');
-$size            = $params->get('size', 150);
+$size     = $params->get('size', 150);
 
 /* Modal params */
 $autoslide  = (int) $params->get('autoslide', 1);
@@ -53,11 +51,11 @@ $pause      = (int) $params->get('pause') !== 1 ? ' data-pause="false"' : '';
 $wrap       = (int) $params->get('wrap') !== 1 ? ' data-wrap="false"' : '';
 $keyboard   = (int) $params->get('keyboard') !== 1 ? ' data-keyboard="false"' : '';
 
-$init = modB3GalleryHelper::init($dir_name);
+$init = modB3GalleryHelper::init($params->get('images'));
 
 if ($params->get('thumbnail') == 1)
     modB3GalleryHelper::createThumbs($params);
 
-$images = modB3GalleryHelper::getImages();
+$images = modB3GalleryHelper::groupByKey($params->get('images'));
 
 require JModuleHelper::getLayoutPath('mod_b3_gallery', $params->get('layout', 'default'));
