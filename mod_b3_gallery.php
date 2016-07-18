@@ -55,7 +55,6 @@ else
 $interval   = $interval !== 5000 ? ' data-interval="' . $interval . '"' : '';
 $interval   = $autoslide !== 0 ? $interval : ' data-interval="false"';
 
-$indicators = (int) $params->get('indicators', 1);
 $controls   = (int) $params->get('controls', 1);
 
 $pause      = (int) $params->get('pause') !== 1 ? ' data-pause="false"' : '';
