@@ -39,7 +39,7 @@
                                    default="1"
                                    class="input-mini"
                                    first="1"
-                                   last="10"
+                                   last="999"
                                    step="1" />
                             <field name="image"
                                    type="media"
