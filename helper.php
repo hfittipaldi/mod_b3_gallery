@@ -28,7 +28,6 @@ class ModB3GalleryHelper
     protected static $dir_name;
     protected static $extensions = '/*.{jpg,jpeg,gif,png}';
 
-    protected static $fullsize;
     protected static $thumbs;
 
     protected static $imgs_dir;
@@ -41,27 +40,26 @@ class ModB3GalleryHelper
         self::$imgs_dir   = JPATH_BASE . '/images/' . self::$dir_name;
         self::$thumbs_dir = JPATH_BASE . '/images/' . self::$dir_name . '/thumbs';
 
-        self::$fullsize   = glob(self::$imgs_dir . self::$extensions, GLOB_BRACE);
         self::$thumbs     = glob(self::$thumbs_dir . self::$extensions, GLOB_BRACE);
     }
 
-	/**
-	 * Retrieve the list of images
-	 *
+    /**
+     * Retrieve the list of images
+     *
      * @return  array
      *
-	 * @since   1.0
-	 */
-    public static function getImages()
+     * @since   1.0
+     */
+    public static function getImages($params)
     {
         // Checks if there is any image in the directory
-        return self::_checkImages();
+        return self::_groupByKey($params);
     }
 
     /**
      * Create the images thumbs
      *
-	 * @param   \Joomla\Registry\Registry  &$params  module parameters
+     * @param   \Joomla\Registry\Registry  &$params  module parameters
      *
      * @return  mixed
      *
@@ -81,22 +79,13 @@ class ModB3GalleryHelper
 
         if ($num_imgs !== $num_thumbs)
         {
-            self::_destroyThumbs();
-        }
-
-        if ($diff === false)
-        {
-            $handle = explode('_', basename($imgs['thumbs'][0]));
-
-            if (strpos($handle[1], $thumb_size) === false)
-            {
-                $diff = self::_destroyThumbs();
-            }
+            $diff = self::_destroyThumbs();
         }
 
         if ($diff !== false)
         {
-            foreach (self::$fullsize as $key => $image)
+            $images = glob(self::$imgs_dir . self::$extensions, GLOB_BRACE);
+            foreach ($images as $key => $image)
             {
                 list($origem_x, $origem_y) = getimagesize($image);
 
@@ -105,10 +94,10 @@ class ModB3GalleryHelper
                 {
                     $img_origem = imagecreatefromjpeg($image);
 
-                    // Get the name of image and renamed it
-                    $old_name   = basename($image);
-                    $thumb_name   = self::_cleanName($old_name);
-                    rename(self::$imgs_dir.'/'.$old_name, self::$imgs_dir.'/'.$new_name);
+                    // Get the name of image and rename it
+                    $img_old_name = basename($image);
+                    $thumb_name   = self::_cleanName($img_old_name);
+                    rename(self::$imgs_dir.'/'.$img_old_name, self::$imgs_dir.'/'.$thumb_name);
 
                     $filename = self::$thumbs_dir . '/' . $thumb_name;
 
@@ -124,15 +113,15 @@ class ModB3GalleryHelper
 
                     if ($original_aspect >= $thumb_aspect)
                     {
-                       // If image is wider than thumbnail (in aspect ratio sense)
-                       $new_height = $thumb_size;
-                       $new_width  = $width / ($height / $thumb_size);
+                        // If image is wider than thumbnail (in aspect ratio sense)
+                        $new_height = $thumb_size;
+                        $new_width  = $width / ($height / $thumb_size);
                     }
                     else
                     {
-                       // If the thumbnail is wider than the image
-                       $new_width  = $thumb_size;
-                       $new_height = $height / ($width / $thumb_size);
+                        // If the thumbnail is wider than the image
+                        $new_width  = $thumb_size;
+                        $new_height = $height / ($width / $thumb_size);
                     }
                     $thumb = imagecreatetruecolor($thumb_size, $thumb_size);
 
@@ -161,9 +150,9 @@ class ModB3GalleryHelper
      *
      * @since   1.0
      */
-    public function groupByKey($json)
+    private function _groupByKey($params)
     {
-        $imagesJSON = self::_getJSON($json);
+        $imagesJSON = self::_getJSON($params->get('images'));
         if ($imagesJSON !== null)
         {
             $result = array();
@@ -220,15 +209,35 @@ class ModB3GalleryHelper
     {
         foreach ($data as $key => $row)
         {
+            // Get the image name, clean it and rename it
+            $img_old_name = basename($row['image']);
+            $img_new_name = self::_cleanName($img_old_name);
+            rename(self::$imgs_dir.'/'.$img_old_name, self::$imgs_dir.'/'.$img_new_name);
+
+            // Split the image path
             $handle = explode('/', $row['image']);
+
+            // Pop the image name from array
             $last = array_pop($handle);
-            array_push($handle, 'thumbs' , $last);
+
+            // Duplicate $handle to build the new path
+            $handle1 = $handle;
+
+            // Recriate the new image path
+            array_push($handle1, $img_new_name);
+            $img = implode('/', $handle1);
+
+            // Create the thumb image path
+            array_push($handle, 'thumbs' , $img_new_name);
             $thumb = implode('/', $handle);
 
+            // Only for ordering porpouses
             $image[$key]    = $row['image'];
             $ordering[$key] = $row['ordering'];
 
+            // Assign the new pathes
             $data[$key]['thumb'] = $thumb;
+            $data[$key]['image'] = $img;
         }
 
         // Ordena os dados com ordering ascendente, image ascendente

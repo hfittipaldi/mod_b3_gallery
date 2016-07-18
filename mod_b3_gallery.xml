@@ -23,8 +23,8 @@
     </media>
 
     <config>
-		<fields name="params">
-			<fieldset name="basic">
+        <fields name="params">
+            <fieldset name="basic">
                 <field name="images"
                        type="repeatable"
                        icon="images"
@@ -87,7 +87,7 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-				<field name="size"
+                <field name="size"
                        type="text"
                        label="Thumbnail size"
                        description="Maximun heigh/width of the thumbnail ('px' is not needed)"
@@ -95,7 +95,7 @@
                        class="inputbox"
                        required="true"
                        default="150" />
-			</fieldset>
+            </fieldset>
 
             <fieldset name="modal" label="Modal Options">
                 <field name="autoslide"
@@ -196,8 +196,8 @@
                     <option value="static"></option>
                 </field>
             </fieldset>
-		</fields>
-	</config>
+        </fields>
+    </config>
 
     <updateservers>
         <server type="extension" priority="1" name="B3 Gallery Module Update Site">https://raw.githubusercontent.com/hfittipaldi/mod_b3_gallery/master/manifest.xml</server>

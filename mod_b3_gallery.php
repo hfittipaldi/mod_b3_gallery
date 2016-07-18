@@ -64,9 +64,9 @@ $keyboard   = (int) $params->get('keyboard') !== 1 ? ' data-keyboard="false"' : 
 
 $init = modB3GalleryHelper::init($params->get('images'));
 
-if ($params->get('thumbnail') == 1)
-    modB3GalleryHelper::createThumbs($params);
+$images = modB3GalleryHelper::getImages($params);
 
-$images = modB3GalleryHelper::groupByKey($params->get('images'));
+if ($params->get('thumbnail') == 1)
+    $thumbnails = modB3GalleryHelper::createThumbs($params);
 
 require JModuleHelper::getLayoutPath('mod_b3_gallery', $params->get('layout', 'default'));
