@@ -18,7 +18,7 @@ defined('_JEXEC') or die;
 require_once __DIR__ . '/helper.php';
 
 $doc = JFactory::getDocument();
-$doc->addScript(JURI::base() . '/media/mod_b3_gallery/js/b3_gallery.js');
+$doc->addScript(JURI::base() . 'media/mod_b3_gallery/js/b3_gallery.js');
 
 /* Module */
 $module_id = $module->id;
