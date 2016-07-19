@@ -258,7 +258,12 @@ class ModB3GalleryHelper
     {
         $handle = self::_getJSON($data);
 
-        $pieces = explode('/', $handle['image'][0]);
+        // Check if $handle is an array or an object
+        if (!is_array($handle)) {
+            $pieces = explode('/', $handle->image[0]);
+        } else {
+            $pieces = explode('/', $handle['image'][0]);
+        }
 
         $first = array_shift($pieces);
         $last = array_pop($pieces);
