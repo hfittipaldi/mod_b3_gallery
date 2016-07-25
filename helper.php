@@ -33,6 +33,13 @@ class ModB3GalleryHelper
     protected static $imgs_dir;
     protected static $thumbs_dir;
 
+    /**
+     * Initialize the global variables
+     *
+     * @param   array  $data An array containing the images data
+     *
+     * @since   1.0
+     */
     public static function init($data)
     {
         self::$dir_name   = self::_getDirName($data);
@@ -45,6 +52,7 @@ class ModB3GalleryHelper
 
     /**
      * Retrieve the list of images
+     * @param   \Joomla\Registry\Registry  &$params  module parameters
      *
      * @return  array
      *
@@ -70,6 +78,9 @@ class ModB3GalleryHelper
         // Checks if there is any image in the directory
         $imgs = self::_checkImages();
 
+        // Get the thumbs size
+        $thumb_size = $params->get('size', 150);
+
         if ($imgs === null)
             return null;
 
@@ -82,26 +93,42 @@ class ModB3GalleryHelper
             $diff = self::_destroyThumbs();
         }
 
+        // Check if the thumb size parameter is changed
+        if ($diff === false)
+        {
+            $thumbs = glob(self::$thumbs_dir . self::$extensions, GLOB_BRACE);
+            foreach ($thumbs as $key => $thumb)
+            {
+                list($width, $height) = getimagesize($thumb);
+
+                if ($width != $thumb_size)
+                {
+                    $diff = self::_destroyThumbs();
+                }
+
+                break;
+            }
+        }
+
         if ($diff !== false)
         {
             $images = glob(self::$imgs_dir . self::$extensions, GLOB_BRACE);
             foreach ($images as $key => $image)
             {
-                list($origem_x, $origem_y) = getimagesize($image);
+                list($img_width, $img_height) = getimagesize($image);
 
                 // Check if the file is really an image
-                if (is_numeric($origem_x))
+                if (is_numeric($img_width))
                 {
+                    // Create the image
                     $img_origem = imagecreatefromjpeg($image);
 
-                    // Get the name of image and rename it
+                    // Get the name of the image and rename it
                     $img_old_name = basename($image);
                     $thumb_name   = self::_cleanName($img_old_name);
                     rename(self::$imgs_dir.'/'.$img_old_name, self::$imgs_dir.'/'.$thumb_name);
 
                     $filename = self::$thumbs_dir . '/' . $thumb_name;
-
-                    $thumb_size = $params->get('size', 150);
 
                     // Get the image dimensions
                     $width = imagesx($img_origem);
@@ -144,7 +171,7 @@ class ModB3GalleryHelper
     /**
      * Group an object by key
      *
-     * @param   array  $json An object containing the item data
+     * @param   \Joomla\Registry\Registry  &$params  module parameters
      *
      * @return  mixed
      *
@@ -166,7 +193,9 @@ class ModB3GalleryHelper
             $return = self::_columnsList($result);
 
             if ($return !== null)
+            {
                 return $return;
+            }
         }
 
         return null;
@@ -175,7 +204,7 @@ class ModB3GalleryHelper
     /**
      * Retrieves the data in JSON format
      *
-     * @param   array  $data An object containing the item data
+     * @param   array  $data An array containing the images data
      *
      * @return  mixed
      *
@@ -191,7 +220,9 @@ class ModB3GalleryHelper
         }
 
         if (json_last_error() === JSON_ERROR_NONE)
+        {
             return $result;
+        }
 
         return null;
     }
@@ -199,7 +230,7 @@ class ModB3GalleryHelper
     /**
      * Retrieves the list of columns
      *
-     * @param   array  $data An object containing the item data
+     * @param   array  $data An object containing the images data
      *
      * @return  mixed
      *
@@ -250,6 +281,8 @@ class ModB3GalleryHelper
     /**
      * Get the image directory
      *
+     * @param   array  $data An array containing the images data
+     *
      * @return  string
      *
      * @since   1.0
@@ -258,10 +291,13 @@ class ModB3GalleryHelper
     {
         $handle = self::_getJSON($data);
 
-        // Check if $handle is an array or an object
-        if (!is_array($handle)) {
+        // Check if $handle is an array or an object (php version < 5.6)
+        if (!is_array($handle))
+        {
             $pieces = explode('/', $handle->image[0]);
-        } else {
+        }
+        else
+        {
             $pieces = explode('/', $handle['image'][0]);
         }
 
@@ -283,7 +319,9 @@ class ModB3GalleryHelper
     private static function _checkPath()
     {
         if (!is_dir(self::$imgs_dir))
+        {
             return null;
+        }
 
         if (!is_dir(self::$thumbs_dir))
         {
@@ -318,7 +356,9 @@ class ModB3GalleryHelper
         );
 
         if ($path === null || $count_imgs === 0 || count($fullsize) === 0)
+        {
             return null;
+        }
 
         return $images;
     }
@@ -326,7 +366,7 @@ class ModB3GalleryHelper
     /**
      * Destroy any image in the directory
      *
-     * @return  mixed
+     * @return  bool
      *
      * @since   1.0
      */
@@ -340,7 +380,7 @@ class ModB3GalleryHelper
     /**
      * Clean the name of the image
      *
-     * @param   string  $file  filename to sanitize
+     * @param   string  $file  Filename to sanitize
      *
      * @return  string
      *
@@ -351,6 +391,6 @@ class ModB3GalleryHelper
         $info = pathinfo($file);
         $file_name =  basename($file, '.' . $info['extension']);
 
-        return JFilterOutput::stringURLSafe($file_name).'.'.$info['extension'];
+        return JFilterOutput::stringURLSafe($file_name) . '.' . $info['extension'];
     }
 }
