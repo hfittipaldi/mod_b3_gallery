@@ -52,23 +52,31 @@ if ($images !== null) :
                         <!-- Wrapper for slides -->
                         <div class="carousel-inner" role="listbox">
                             <?php
-                                $array = '[';
+                            $imgs_width = '[';
+                            $subtitle_array = '[';
                             foreach ($files as $k => $file) :
                                 list($width, $height) = getimagesize($file);
-                                if ($k > 0) $array .= ',';
-                                $array .= $width;
+                                if ($k > 0)
+                                {
+                                    $imgs_width .= ',';
+                                    $subtitle_array .= ',';
+                                }
+                                $imgs_width .= $width;
                             ?>
                             <figure class="item-<?php echo $module_id . '-' . $k;?> item<?php echo $k==0 ? ' active' : ''; ?>">
                                 <img src="<?php echo $file; ?>" alt="<?php echo $subtitles[$k]; ?>" />
 
-                                <?php if ($subtitles[$k] !== '') : ?>
+                                <?php if ($subtitles[$k] !== '' && $counter === false) : ?>
                                 <figcaption class="carousel-caption">
                                     <?php echo $subtitles[$k]; ?>
                                 </figcaption>
+                                <?php elseif ($counter !== false) : ?>
+                                    <?php $subtitle_array .= "'" . $subtitles[$k] . "'"; ?>
                                 <?php endif; ?>
                             </figure>
                             <?php endforeach; ?>
-                            <?php $array .= ']'; ?>
+                            <?php $imgs_width .= ']'; ?>
+                            <?php $subtitle_array .= ']'; ?>
                         </div>
 
                         <?php if ($controls === 1) : ?>
@@ -84,19 +92,22 @@ if ($images !== null) :
                         <?php endif; ?>
                     </div>
                 </div>
+
+                <?php if ($counter !== false) : ?>
                 <div class="modal-footer">
-
-                    <div class="pull-left"><span id="counter-<?php echo $module_id; ?>">1</span> / <?php echo count($images); ?></div>
-
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <div class="pull-right"><span id="counter-<?php echo $module_id; ?>">1</span> / <?php echo count($images); ?></div>
+                    <?php if (count($subtitles) > 0) : ?>
+                    <div id="caption-<?php echo $module_id; ?>" class="caption"></div>
+                    <?php endif; ?>
                 </div>
+                <?php endif; ?>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
     <script>
         jQuery('.b3Gallery-item').find('a').on('click', function() {
-            getItemIndex(<?php echo $module_id; ?>, <?php echo $array; ?>);
+            getItemIndex(<?php echo $module_id; ?>, <?php echo $imgs_width; ?>, <?php echo $subtitle_array; ?>);
         });
     </script>
 

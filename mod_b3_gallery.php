@@ -18,6 +18,7 @@ defined('_JEXEC') or die;
 require_once __DIR__ . '/helper.php';
 
 $doc = JFactory::getDocument();
+$doc->addStyleSheet(JURI::base() . '/media/mod_b3_gallery/css/b3_gallery.css');
 $doc->addScript(JURI::base() . 'media/mod_b3_gallery/js/b3_gallery.js');
 
 /* Module */
@@ -25,13 +26,14 @@ $module_id = $module->id;
 $mod_title = $module->title;
 
 /* Params */
-$size      = $params->get('size', 150);
-$bootstrap = $params->get('bootstrap', 1);
-$columns   = $params->get('columns', '');
+$size      = (int) $params->get('size', 150);
+$bootstrap = (int) $params->get('bootstrap', 1);
+$columns   = (string) $params->get('columns', '');
+$counter   = (bool) $params->get('counter', true);
 
 $row  = '';
 $cols = 'pull-left';
-if ((int)$bootstrap === 1)
+if ($bootstrap === 1)
 {
     $row  =  ' row';
     $cols = $columns !== '' ? $columns : 'col-xs-6 col-sm-4 col-md-3';
@@ -40,17 +42,9 @@ if ((int)$bootstrap === 1)
 /* Modal params */
 $autoslide  = (int) $params->get('autoslide', 1);
 $interval   = (int) $params->get('interval', 5000);
-$transition = (int) $params->get('transition', 0);
 
-if ($transition !== 0)
-{
-    $transition = ' carousel-fade';
-    $doc->addStyleSheet(JURI::base() . '/media/mod_b3_gallery/css/b3_gallery.css');
-}
-else
-{
-    $transition = '';
-}
+$transition = (int) $params->get('transition', 0);
+$transition = $transition !== 0 ? ' carousel-fade' : '';
 
 $interval   = $interval !== 5000 ? ' data-interval="' . $interval . '"' : '';
 $interval   = $autoslide !== 0 ? $interval : ' data-interval="false"';

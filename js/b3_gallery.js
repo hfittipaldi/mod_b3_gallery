@@ -1,14 +1,15 @@
 ;
-function getItemIndex(id, img_width) {
+function getItemIndex(id, imgs_width, subtitles) {
     var carousel = jQuery('#carousel-' + id);
 
-    resizeModal(id, img_width[0]+'px');
+    resizeModal(id, imgs_width[0]+'px');
     carousel.on('slid.bs.carousel', function() {
         var index = jQuery(carousel).find('figure.active').index(),
             currentIndex = index + 1,
-            tam = img_width[index] + 'px';
+            tam = imgs_width[index] + 'px';
 
         jQuery('#counter-'+id).text(currentIndex);
+        jQuery('#caption-'+id).text(subtitles[index]);
 
         resizeModal(id, tam);
     });
