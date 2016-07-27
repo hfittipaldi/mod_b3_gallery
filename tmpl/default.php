@@ -52,8 +52,6 @@ if ($images !== null) :
                         <!-- Wrapper for slides -->
                         <div class="carousel-inner" role="listbox">
                             <?php
-                            $imgs_width = '[';
-                            $subtitle_array = '[';
                             foreach ($files as $k => $file) :
                                 list($width, $height) = getimagesize($file);
                                 if ($k > 0)
@@ -75,8 +73,6 @@ if ($images !== null) :
                                 <?php endif; ?>
                             </figure>
                             <?php endforeach; ?>
-                            <?php $imgs_width .= ']'; ?>
-                            <?php $subtitle_array .= ']'; ?>
                         </div>
 
                         <?php if ($controls === 1) : ?>
@@ -107,7 +103,7 @@ if ($images !== null) :
 
     <script>
         jQuery('.b3Gallery-item').find('a').on('click', function() {
-            getItemIndex(<?php echo $module_id; ?>, <?php echo $imgs_width; ?>, <?php echo $subtitle_array; ?>);
+            getItemIndex(<?php echo $module_id; ?>, [<?php echo $imgs_width; ?>], [<?php echo $subtitle_array; ?>]);
         });
     </script>
 
