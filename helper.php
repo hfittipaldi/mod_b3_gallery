@@ -38,6 +38,8 @@ class ModB3GalleryHelper
      *
      * @param   array  $data An array containing the images data
      *
+     * @return  void
+     *
      * @since   1.0
      */
     public static function init($data)
@@ -177,7 +179,7 @@ class ModB3GalleryHelper
      *
      * @since   1.0
      */
-    private function _groupByKey($params)
+    private static function _groupByKey($params)
     {
         $imagesJSON = self::_getJSON($params->get('images'));
         if ($imagesJSON !== null)
@@ -210,7 +212,7 @@ class ModB3GalleryHelper
      *
      * @since   1.0
      */
-    private function _getJSON($data)
+    private static function _getJSON($data)
     {
         $result = json_decode($data, true);
 
@@ -236,7 +238,7 @@ class ModB3GalleryHelper
      *
      * @since   1.0
      */
-    private function _columnsList($data)
+    private static function _columnsList($data)
     {
         foreach ($data as $key => $row)
         {
