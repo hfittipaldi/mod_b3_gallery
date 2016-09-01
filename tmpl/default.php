@@ -52,6 +52,7 @@ if ($images !== null) :
                         <!-- Wrapper for slides -->
                         <div class="carousel-inner" role="listbox">
                             <?php
+                            $imgs_width = $subtitle_array = '';
                             foreach ($files as $k => $file) :
                                 list($width, $height) = getimagesize($file);
                                 if ($k > 0)
