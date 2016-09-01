@@ -6,7 +6,7 @@
     <copyright>Copyright (C) 2016 Hugo Fittipaldi. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later</license>
     <authorEmail>hugo.fittipaldi@gmail.com</authorEmail>
-    <version>v1.0.0-rc3.5</version>
+    <version>v1.0.0-rc4</version>
     <description>Place a Bootstrap 3 gallery in a module position.</description>
     <files>
         <filename>mod_b3_gallery.xml</filename>
@@ -22,14 +22,19 @@
         <folder>js</folder>
     </media>
 
+	<languages>
+		<language tag="en-GB">en-GB.mod_b3_gallery.ini</language>
+		<language tag="pt-BR">pt-BR.mod_b3_gallery.ini</language>
+	</languages>
+
     <config>
         <fields name="params">
             <fieldset name="basic">
                 <field name="images"
                        type="repeatable"
                        icon="images"
-                       description="PLG_TINY_FIELD_TEMPLATE_FIELD_ELEMENTS_DESC"
-                       label="Gallery images"
+                       description="MOD_B3_GALLERY_IMAGES_GALLERY_DESC"
+                       label="MOD_B3_GALLERY_IMAGES_GALLERY_LABEL"
                        filter="raw"
                        default="{'ordering':'','image':'','subtitle':'','thumb':''}">
                     <fields name="params">
@@ -45,13 +50,13 @@
                                    type="media"
                                    preview="tooltip"
                                    directory="images"
-                                   label="Image"
-                                   description="This is the main image for this slide" />
+                                   label="MOD_B3_GALLERY_IMAGE_FIELD_LABEL"
+                                   description="MOD_B3_GALLERY_IMAGE_FIELD_DESC" />
                             <field name="subtitle"
                                    type="text"
                                    default=""
-                                   label="Image subtitle"
-                                   description="The subtitle of the image" />
+                                   label="MOD_B3_GALLERY_SUBTITLE_FIELD_LABEL"
+                                   description="MOD_B3_GALLERY_SUBTITLE_FIELD_DESC" />
                             <field name="thumb"
                                    type="hidden" />
                         </fieldset>
@@ -66,57 +71,57 @@
                        type="radio"
                        class="btn-group btn-group-yesno radio"
                        default="1"
-                       label="Use bootstrap"
-                       description="Use bootstrap columns grid.">
+                       label="MOD_B3_GALLERY_BOOTSTRAP_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_BOOTSTRAP_FIELD_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="columns"
                        type="text"
                        default="col-xs-6 col-sm-4 col-md-3"
-                       label="Custom columns"
-                       description="Customize bootstrap columns grid." />
+                       label="MOD_B3_GALLERY_COLUMNS_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_COLUMNS_FIELD_DESC" />
 
                 <field name="thumbnail"
                        type="radio"
                        class="btn-group btn-group-yesno radio"
                        default="1"
-                       label="Auto create thumbs"
-                       description="Choose No if you will create your own thumbs.">
+                       label="MOD_B3_GALLERY_AUTO_THUMBS_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_AUTO_THUMBS_FIELD_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="size"
                        type="text"
-                       label="Thumbnail size"
-                       description="Maximun heigh/width of the thumbnail ('px' is not needed)"
-                       default="150" />
+                       default="150"
+                       label="MOD_B3_GALLERY_THUMBS_SIZE_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_THUMBS_SIZE_FIELD_DESC" />
                 <field name="counter"
                        type="radio"
                        class="btn-group btn-group-yesno radio"
                        default="1"
-                       label="Show counter"
-                       description="Show counter">
+                       label="MOD_B3_GALLERY_COUNTER_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_COUNTER_FIELD_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
             </fieldset>
 
-            <fieldset name="modal" label="Modal Options">
+            <fieldset name="modal" label="MOD_B3_GALLERY_MODAL_OPTIONS">
                 <field name="autoslide"
                        type="radio"
                        class="btn-group btn-group-yesno radio"
-                       default="1"
-                       label="Auto slide"
-                       description="If no, carousel will not automatically cycle.">
+                       default="0"
+                       label="MOD_B3_GALLERY_AUTO_SLIDE_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_AUTO_SLIDE_FIELD_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="transition"
                        type="list"
                        default="0"
-                       label="Transition"
-                       description="Image transition">
+                       label="MOD_B3_GALLERY_TRANSITION_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_TRANSITION_FIELD_DESC">
                     <option value="0">Default</option>
                     <option value="1">Fade</option>
                 </field>
@@ -129,8 +134,8 @@
                        type="radio"
                        class="btn-group btn-group-yesno radio"
                        default="1"
-                       label="Left/right controls"
-                       description="Turn on or off left/right buttons.">
+                       label="MOD_B3_GALLERY_CONTROLS_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_CONTROLS_FIELD_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
@@ -138,8 +143,8 @@
                        type="radio"
                        class="btn-group btn-group-yesno radio"
                        default="1"
-                       label="Pauses on mouseenter?"
-                       description="Pauses the cycling of the carousel on mouseenter and resumes the cycling of the carousel on mouseleave.">
+                       label="MOD_B3_GALLERY_PAUSE_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_PAUSE_FIELD_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
@@ -147,8 +152,8 @@
                        type="radio"
                        class="btn-group btn-group-yesno radio"
                        default="1"
-                       label="Carousel loop"
-                       description="Whether the carousel should cycle continuously or have hard stops.">
+                       label="MOD_B3_GALLERY_CAROUSEL_LOOP_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_CAROUSEL_LOOP_FIELD_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
@@ -156,8 +161,8 @@
                        type="radio"
                        class="btn-group btn-group-yesno radio"
                        default="1"
-                       label="Keyboard control"
-                       description="Whether the carousel should react to keyboard events.">
+                       label="MOD_B3_GALLERY_KEYBOARD_CONTROL_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_KEYBOARD_CONTROL_FIELD_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
