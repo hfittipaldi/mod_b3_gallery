@@ -90,7 +90,6 @@
                        type="text"
                        label="Thumbnail size"
                        description="Maximun heigh/width of the thumbnail ('px' is not needed)"
-                       required="true"
                        default="150" />
                 <field name="counter"
                        type="radio"
