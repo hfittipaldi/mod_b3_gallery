@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fieldset name="image">
+        <field name="image"
+               type="media"
+               preview="tooltip"
+               directory=""
+               required="true"
+               label="MOD_B3_GALLERY_IMAGE_FIELD_LABEL"
+               description="MOD_B3_GALLERY_IMAGE_FIELD_DESC" />
+        <field name="thumb"
+               type="media"
+               preview="tooltip"
+               directory=""
+               label="MOD_B3_GALLERY_THUMB_FIELD_LABEL"
+               description="MOD_B3_GALLERY_THUMB_FIELD_DESC" />
+        <field name="caption"
+               type="text"
+               default=""
+               label="MOD_B3_GALLERY_CAPTION_FIELD_LABEL"
+               description="MOD_B3_GALLERY_CAPTION_FIELD_DESC" />
+    </fieldset>
+</form>

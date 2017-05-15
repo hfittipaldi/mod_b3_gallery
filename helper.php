@@ -25,286 +25,222 @@ jimport('joomla.filter.filteroutput');
  */
 class ModB3GalleryHelper
 {
-    protected static $dir_name;
-    protected static $extensions = '/*.{jpg,jpeg,gif,png}';
-
-    protected static $thumbs;
-
-    protected static $imgs_dir;
-    protected static $thumbs_dir;
-
-    /**
-     * Initialize the global variables
-     *
-     * @param   array  $data An array containing the images data
-     *
-     * @return  void
-     *
-     * @since   1.0
-     */
-    public static function init($data)
-    {
-        self::$dir_name   = self::_getDirName($data);
-
-        self::$imgs_dir   = JPATH_BASE . '/images/' . self::$dir_name;
-        self::$thumbs_dir = JPATH_BASE . '/images/' . self::$dir_name . '/thumbs';
-
-        self::$thumbs     = glob(self::$thumbs_dir . self::$extensions, GLOB_BRACE);
-    }
-
     /**
      * Retrieve the list of images
+     *
      * @param   \Joomla\Registry\Registry  &$params  module parameters
+     * @param  integer $module_id Module id
      *
      * @return  array
      *
      * @since   1.0
      */
-    public static function getImages($params)
+    public static function getGallery($params, $module_id)
     {
-        // Checks if there is any image in the directory
-        return self::_groupByKey($params);
+        $gallery_params = $params->get('gallery');
+
+        $new_params = self::_checkThumbs($params, $module_id);
+        if ($new_params !== null)
+        {
+            $gallery_params = $new_params;
+        }
+
+        return $gallery_params;
     }
 
     /**
-     * Create the images thumbs
+     * Checks if there is any image in the directory
+     *
+     * @private
      *
      * @param   \Joomla\Registry\Registry  &$params  module parameters
+     * @param  integer $module_id Module id
      *
-     * @return  mixed
+     * @return mixed Returns an array of images or null
      *
-     * @since   1.0
+     * @since 2.0
      */
-    public static function createThumbs($params)
+    protected static function _checkThumbs($params, $module_id)
     {
-        // Checks if there is any image in the directory
-        $imgs = self::_checkImages();
-
-        // Get the thumbs size
+        $gallery = array();
         $thumb_size = $params->get('size', 150);
+        $gallery_params = $params->get('gallery');
 
-        if ($imgs === null)
-            return null;
-
-        $num_imgs   = count($imgs['fullsize']);
-        $num_thumbs = count($imgs['thumbs']);
-        $diff       = false;
-
-        if ($num_imgs !== $num_thumbs)
+        foreach ($gallery_params as $key => $image)
         {
-            $diff = self::_destroyThumbs();
-        }
+            $create_thumb = false;
+            $gallery[$key]['image']   = $image->image;
+            $gallery[$key]['thumb']   = $image->thumb;
+            $gallery[$key]['caption'] = $image->caption;
 
-        // Check if the thumb size parameter is changed
-        if ($diff === false)
-        {
-            $thumbs = glob(self::$thumbs_dir . self::$extensions, GLOB_BRACE);
-            foreach ($thumbs as $key => $thumb)
+            if (!empty($image->thumb))
             {
-                list($width, $height) = getimagesize($thumb);
+                list($width) = getimagesize($image->thumb);
 
                 if ($width != $thumb_size)
                 {
-                    $diff = self::_destroyThumbs();
-                }
+                    unlink($image->thumb);
 
-                break;
-            }
-        }
+                    $gallery[$key]['thumb'] = self::_createThumb($image, $thumb_size);
 
-        if ($diff !== false)
-        {
-            $images = glob(self::$imgs_dir . self::$extensions, GLOB_BRACE);
-            foreach ($images as $key => $image)
-            {
-                list($img_width, $img_height) = getimagesize($image);
-
-                // Check if the file is really an image
-                if (is_numeric($img_width))
-                {
-                    // Create the image
-                    $img_origem = imagecreatefromjpeg($image);
-
-                    // Get the name of the image and rename it
-                    $img_old_name = basename($image);
-                    $thumb_name   = self::_cleanName($img_old_name);
-                    rename(self::$imgs_dir.'/'.$img_old_name, self::$imgs_dir.'/'.$thumb_name);
-
-                    $filename = self::$thumbs_dir . '/' . $thumb_name;
-
-                    // Get the image dimensions
-                    $width = imagesx($img_origem);
-                    $height = imagesy($img_origem);
-
-                    $original_aspect = $width / $height;
-                    $thumb_aspect = 1;
-
-
-                    if ($original_aspect >= $thumb_aspect)
-                    {
-                        // If image is wider than thumbnail (in aspect ratio sense)
-                        $new_height = $thumb_size;
-                        $new_width  = $width / ($height / $thumb_size);
-                    }
-                    else
-                    {
-                        // If the thumbnail is wider than the image
-                        $new_width  = $thumb_size;
-                        $new_height = $height / ($width / $thumb_size);
-                    }
-                    $thumb = imagecreatetruecolor($thumb_size, $thumb_size);
-
-                    // Resize and crop
-                    imagecopyresampled($thumb,
-                                       $img_origem,
-                                       0 - ($new_width - $thumb_size) / 2, // Center the image horizontally
-                                       0 - ($new_height - $thumb_size) / 2, // Center the image vertically
-                                       0, 0,
-                                       $new_width, $new_height,
-                                       $width, $height);
-                    imagejpeg($thumb, $filename, 80);
+                    $create_thumb = true;
                 }
             }
-        }
-
-        return true;
-    }
-
-    /**
-     * Group an object by key
-     *
-     * @param   \Joomla\Registry\Registry  &$params  module parameters
-     *
-     * @return  mixed
-     *
-     * @since   1.0
-     */
-    private static function _groupByKey($params)
-    {
-        $imagesJSON = self::_getJSON($params->get('images'));
-        if ($imagesJSON !== null)
-        {
-            $result = array();
-            foreach ($imagesJSON as $i => $sub)
+            else
             {
-                foreach ($sub as $k => $v)
-                {
-                    $result[$k][$i] = $v;
-                }
-            }
-            $return = self::_columnsList($result);
+                $gallery[$key]['thumb'] = self::_createThumb($image, $thumb_size);
 
-            if ($return !== null)
-            {
-                return $return;
+                $create_thumb = true;
             }
         }
 
-        return null;
+        $return = !$create_thumb ? null : self::_setParams($params, $gallery, $module_id);
+
+        return $return;
     }
 
     /**
-     * Retrieves the data in JSON format
+     * Create the image thumbnail
      *
-     * @param   array  $data An array containing the images data
+     * @param   \Joomla\Registry\Registry  $image parameters
+     * @param   integer  Thumb size
      *
-     * @return  mixed
-     *
-     * @since   1.0
-     */
-    private static function _getJSON($data)
-    {
-        $result = json_decode($data, true);
-
-        if (version_compare(phpversion(), '5.6', '<'))
-        {
-            $result = call_user_func_array('json_decode', func_get_args());
-        }
-
-        if (json_last_error() === JSON_ERROR_NONE)
-        {
-            return $result;
-        }
-
-        return null;
-    }
-
-    /**
-     * Retrieves the list of columns
-     *
-     * @param   array  $data An object containing the images data
-     *
-     * @return  mixed
+     * @return  string Filename path
      *
      * @since   1.0
      */
-    private static function _columnsList($data)
+    protected static function _createThumb($image, $thumb_size)
     {
-        foreach ($data as $key => $row)
+        $fullsize_img = $image->image;
+        $thumbs_dir   = self::_getThumbPath($fullsize_img);
+
+        list($width, $height) = getimagesize($fullsize_img);
+
+
+        // Create the image
+        $type = exif_imagetype($fullsize_img);
+        if ($type === 2) // IMAGETYPE_JPEG
         {
-            // Get the image name, clean it and rename it
-            $img_old_name = basename($row['image']);
-            $img_new_name = self::_cleanName($img_old_name);
-            rename(self::$imgs_dir.'/'.$img_old_name, self::$imgs_dir.'/'.$img_new_name);
-
-            // Split the image path
-            $handle = explode('/', $row['image']);
-
-            // Pop the image name from array
-            $last = array_pop($handle);
-
-            // Duplicate $handle to build the new path
-            $handle1 = $handle;
-
-            // Recriate the new image path
-            array_push($handle1, $img_new_name);
-            $img = implode('/', $handle1);
-
-            // Create the thumb image path
-            array_push($handle, 'thumbs' , $img_new_name);
-            $thumb = implode('/', $handle);
-
-            // Only for ordering porpouses
-            $image[$key]    = $row['image'];
-            $ordering[$key] = $row['ordering'];
-
-            // Assign the new pathes
-            $data[$key]['thumb'] = $thumb;
-            $data[$key]['image'] = $img;
+            $img_origem = imagecreatefromjpeg($fullsize_img);
+        }
+        elseif ($type === 3) // IMAGETYPE_PNG
+        {
+            $img_origem = imagecreatefrompng($fullsize_img);
         }
 
-        // Ordena os dados com ordering ascendente, image ascendente
-        // adiciona $data como o último parâmetro, para ordenar pela chave comum
-        array_multisort($ordering, SORT_ASC, $image, SORT_ASC, $data);
+        // Set the thumbnail
+        $thumb_name = basename($fullsize_img);
+        $filename = $thumbs_dir . '/' . $thumb_name;
 
-        return $data;
-    }
+        // Get the image dimensions
+        $width  = imagesx($img_origem);
+        $height = imagesy($img_origem);
 
-    /**
-     * Get the image directory
-     *
-     * @param   array  $data An array containing the images data
-     *
-     * @return  string
-     *
-     * @since   1.0
-     */
-    private static function _getDirName($data)
-    {
-        $handle = self::_getJSON($data);
+        $original_aspect = $width / $height;
+        $thumb_aspect = 1;
 
-        // Check if $handle is an array or an object (php version < 5.6)
-        if (!is_array($handle))
+
+        if ($original_aspect >= $thumb_aspect)
         {
-            $pieces = explode('/', $handle->image[0]);
+            // If image is wider than thumbnail (in aspect ratio sense)
+            $new_height = $thumb_size;
+            $new_width  = $width / ($height / $thumb_size);
         }
         else
         {
-            $pieces = explode('/', $handle['image'][0]);
+            // If the thumbnail is wider than the image
+            $new_width  = $thumb_size;
+            $new_height = $height / ($width / $thumb_size);
+        }
+        $thumb = imagecreatetruecolor($thumb_size, $thumb_size);
+
+        // Resize and crop
+        imagecopyresampled($thumb,
+                           $img_origem,
+                           0 - ($new_width - $thumb_size) / 2, // Center the image horizontally
+                           0 - ($new_height - $thumb_size) / 2, // Center the image vertically
+                           0, 0,
+                           $new_width, $new_height,
+                           $width, $height);
+
+        if ($type === 2)
+        {
+            imagejpeg($thumb, $filename, 80);
+        }
+        elseif ($type === 3)
+        {
+            imagepng($thumb, $filename);
         }
 
-        $first = array_shift($pieces);
-        $last = array_pop($pieces);
+        return $filename;
+    }
+
+    /**
+     * Update the database with new module parameters
+     *
+     * @param   \Joomla\Registry\Registry  &$params  module parameters
+     * @param   array  $gallery  Gallery parameters
+     * @param   integer  $module_id  Module id
+     *
+     * @return  mixed
+     *
+     * @since   2.0
+     */
+    protected static function _setParams($params, $gallery, $module_id)
+    {
+        $return = null;
+
+        if (count($gallery) > 0)
+        {
+            $result['gallery']          = $gallery;
+            $result['bootstrap']        = $params->get('bootstrap');
+            $result['columns']          = $params->get('columns');
+            $result['size']             = $params->get('size');
+            $result['counter']          = $params->get('counter');
+            $result['autoslide']        = $params->get('autoslide');
+            $result['transition']       = $params->get('transition');
+            $result['interval']         = $params->get('interval');
+            $result['controls']         = $params->get('controls');
+            $result['pause']            = $params->get('pause');
+            $result['wrap']             = $params->get('wrap');
+            $result['keyboard']         = $params->get('keyboard');
+            $result['layout']           = $params->get('layout');
+            $result['moduleclass_sfx']  = $params->get('moduleclass_sfx');
+            $result['cache']            = $params->get('cache');
+            $result['cache_time']       = $params->get('cache_time');
+            $result['cachemode']        = $params->get('cachemode');
+            $result['module_tag']       = $params->get('module_tag');
+            $result['bootstrap_size']   = $params->get('bootstrap_size');
+            $result['header_tag']       = $params->get('header_tag');
+            $result['header_class']     = $params->get('header_class');
+            $result['style']            = $params->get('style');
+
+            $db = JFactory::getDbo();
+            $query = $db->getQuery(true);
+            $query->update($db->quoteName('#__modules'))
+                ->set($db->quoteName('params') . ' = ' . $db->quote(json_encode($result)))
+                ->where($db->quoteName('id') . ' = ' . $module_id);
+
+            if ($db->setQuery($query)->execute())
+            {
+                $return = json_decode(json_encode($gallery), false);
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Checks if the selected directory exists
+     *
+     * @return  string
+     *
+     * @since   2.0
+     */
+    protected static function _getImagePath($path)
+    {
+        $pieces = explode('/', $path);
+        $image  = array_pop($pieces);
 
         $dir_name = implode('/', $pieces);
 
@@ -314,69 +250,20 @@ class ModB3GalleryHelper
     /**
      * Checks if the selected directory exists
      *
-     * @return  mixed
+     * @return  string
      *
-     * @since   1.0
+     * @since   2.0
      */
-    private static function _checkPath()
+    protected static function _getThumbPath($path)
     {
-        if (!is_dir(self::$imgs_dir))
+        $thumbs_dir = self::_getImagePath($path) . '/thumbs';
+
+        if (!is_dir($thumbs_dir))
         {
-            return null;
+            mkdir($thumbs_dir);
         }
 
-        if (!is_dir(self::$thumbs_dir))
-        {
-            mkdir(self::$thumbs_dir);
-        }
-
-        return true;
-    }
-
-    /**
-     * Checks if there is any image in the directory
-     *
-     * @return  mixed
-     *
-     * @since   1.0
-     */
-    private static function _checkImages()
-    {
-        $path          = self::_checkPath();
-        $fullsize_imgs = glob('images/' . self::$dir_name . self::$extensions, GLOB_BRACE);
-        $count_imgs    = count($fullsize_imgs);
-
-        foreach ($fullsize_imgs as $image)
-        {
-            list($width, $height) = getimagesize($image);
-            if (is_numeric($width))
-                $fullsize[] = $image;
-        }
-        $images = array(
-            'fullsize' => $fullsize,
-            'thumbs'   => glob('images/' . self::$dir_name . '/thumbs' . self::$extensions, GLOB_BRACE)
-        );
-
-        if ($path === null || $count_imgs === 0 || count($fullsize) === 0)
-        {
-            return null;
-        }
-
-        return $images;
-    }
-
-    /**
-     * Destroy any image in the directory
-     *
-     * @return  bool
-     *
-     * @since   1.0
-     */
-    private static function _destroyThumbs()
-    {
-        array_map('unlink', self::$thumbs);
-
-        return true;
+        return $thumbs_dir;
     }
 
     /**
@@ -388,11 +275,11 @@ class ModB3GalleryHelper
      *
      * @since   1.0
      */
-    private static function _cleanName($file)
+    protected static function _cleanName($file)
     {
         $info = pathinfo($file);
-        $file_name =  basename($file, '.' . $info['extension']);
+        $filename = basename($file, '.' . $info['extension']);
 
-        return JFilterOutput::stringURLSafe($file_name) . '.' . $info['extension'];
+        return JFilterOutput::stringURLSafe($filename) . '.' . $info['extension'];
     }
 }

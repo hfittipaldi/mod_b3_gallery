@@ -11,33 +11,31 @@
  * @link        https://github.com/hfittipaldi/mod_b3_gallery
  */
 
-// no direct access
+// No direct access
 defined('_JEXEC') or die;
 ?>
 <div id="b3Gallery-<?php echo $module_id; ?>" class="b3Gallery<?php echo $row; ?>">
 
 <?php
-if ($images !== null) :
-    $files     = array();
-    $thumbs    = array();
-    $subtitles = array();
-    foreach ($images as $key => $image)
+if ($gallery !== null) :
+
+    $captions = array();
+    foreach ($gallery as $key => $image)
     {
-        array_push($thumbs, $image['thumb']);
-        array_push($files, $image['image']);
-        array_push($subtitles, $image['subtitle']);
+        array_push($captions, $image->caption);
     }
 
-    foreach ($thumbs as $k => $thumb)
-    {
+    $k = 0;
+    foreach ($gallery as $image) :
 ?>
         <div data-target="#carousel-<?php echo $module_id; ?>" data-slide-to="<?php echo $k; ?>" class="b3Gallery-item <?php echo $cols; ?>">
             <a href="#galleryModal-<?php echo $module_id; ?>" class="thumbnail" data-toggle="modal" data-item-id="item-<?php echo $module_id .'-' . $k; ?>">
-                <img src="<?php echo $thumb; ?>" alt="<?php echo $subtitles[$k]; ?>" />
+                <img src="<?php echo $image->thumb; ?>" alt="<?php echo $image->caption; ?>" title="<?php echo $image->caption; ?>" />
             </a>
         </div>
 <?php
-    }
+        ++$k;
+    endforeach;
 ?>
 
     <div id="galleryModal-<?php echo $module_id; ?>" class="modal fade" tabindex="-1" role="dialog">
@@ -52,28 +50,24 @@ if ($images !== null) :
                         <!-- Wrapper for slides -->
                         <div class="carousel-inner" role="listbox">
                             <?php
-                            $imgs_width = $subtitle_array = '';
-                            foreach ($files as $k => $file) :
+                            $k = 0;
+                            foreach ($gallery as $image) :
+                                $file = $image->image;
                                 list($width, $height) = getimagesize($file);
-                                if ($k > 0)
-                                {
-                                    $imgs_width .= ',';
-                                    $subtitle_array .= ',';
-                                }
-                                $imgs_width .= $width;
+                                $imgs_width[] = $width;
                             ?>
                             <figure class="item-<?php echo $module_id . '-' . $k;?> item<?php echo $k==0 ? ' active' : ''; ?>">
-                                <img src="<?php echo $file; ?>" alt="<?php echo $subtitles[$k]; ?>" />
+                                <img src="<?php echo $file; ?>" alt="<?php echo $image->caption; ?>" />
 
-                                <?php if ($subtitles[$k] !== '' && $counter === false) : ?>
+                                <?php if ($image->caption !== '' && $counter === false) : ?>
                                 <figcaption class="carousel-caption">
-                                    <?php echo $subtitles[$k]; ?>
+                                    <?php echo $image->caption; ?>
                                 </figcaption>
-                                <?php elseif ($counter !== false) : ?>
-                                    <?php $subtitle_array .= "'" . $subtitles[$k] . "'"; ?>
                                 <?php endif; ?>
                             </figure>
-                            <?php endforeach; ?>
+                            <?php
+                                ++$k;
+                            endforeach; ?>
                         </div>
 
                         <?php if ($controls === 1) : ?>
@@ -92,10 +86,8 @@ if ($images !== null) :
 
                 <?php if ($counter !== false) : ?>
                 <div class="modal-footer">
-                    <div class="pull-right"><span id="counter-<?php echo $module_id; ?>">1</span> / <?php echo count($images); ?></div>
-                    <?php if (count($subtitles) > 0) : ?>
-                    <div id="caption-<?php echo $module_id; ?>" class="caption"></div>
-                    <?php endif; ?>
+                    <div class="pull-right"><span id="counter-<?php echo $module_id; ?>">1</span> / <?php echo count($gallery); ?></div>
+                    <div id="caption-<?php echo $module_id; ?>" class="caption"><?php echo $captions[0]; ?></div>
                 </div>
                 <?php endif; ?>
             </div><!-- /.modal-content -->
@@ -104,7 +96,7 @@ if ($images !== null) :
 
     <script>
         jQuery('.b3Gallery-item').find('a').on('click', function() {
-            getItemIndex(<?php echo $module_id; ?>, [<?php echo $imgs_width; ?>], [<?php echo $subtitle_array; ?>]);
+            getItemIndex( <?php echo $module_id; ?>, [ <?php echo implode(', ', $imgs_width); ?> ], [ '<?php echo implode("', '", $captions); ?>' ] );
         });
     </script>
 
@@ -112,9 +104,8 @@ if ($images !== null) :
     <div class="alert alert-danger" role="alert">
         <a class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></a>
         <h4 class="alert-heading">Error</h4>
-        <p>The directory <b><?php echo $dir_name; ?></b> does not exits or there is no images in the <b><?php echo $dir_name; ?></b> directory</p>
+        <p>There is no images in the gallery</p>
     </div>
 <?php endif; ?>
-
     <div class="clearfix"></div>
 </div>

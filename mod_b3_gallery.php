@@ -55,11 +55,6 @@ $pause      = (int) $params->get('pause') !== 1 ? ' data-pause="false"' : '';
 $wrap       = (int) $params->get('wrap') !== 1 ? ' data-wrap="false"' : '';
 $keyboard   = (int) $params->get('keyboard') !== 1 ? ' data-keyboard="false"' : '';
 
-$init = modB3GalleryHelper::init($params->get('images'));
-
-$images = modB3GalleryHelper::getImages($params);
-
-if ($params->get('thumbnail') == 1)
-    $thumbnails = modB3GalleryHelper::createThumbs($params);
+$gallery = modB3GalleryHelper::getGallery($params, $module_id);
 
 require JModuleHelper::getLayoutPath('mod_b3_gallery', $params->get('layout', 'default'));

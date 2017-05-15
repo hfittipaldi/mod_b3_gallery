@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="module" version="3.2" client="site" method="upgrade">
+<extension type="module" version="3.6" client="site" method="upgrade">
     <name>B3 Gallery Module</name>
     <author>Hugo Fittipaldi</author>
     <creationDate>May 2016</creationDate>
-    <copyright>Copyright (C) 2016 Hugo Fittipaldi. All rights reserved.</copyright>
+    <copyright>Copyright (C) 2017 Hugo Fittipaldi. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later</license>
     <authorEmail>hugo.fittipaldi@gmail.com</authorEmail>
-    <version>v1.0.0-rc4</version>
+    <version>2.0.0-dev</version>
     <description>Place a Bootstrap 3 gallery in a module position.</description>
+    <scriptfile>script.php</scriptfile>
+
     <files>
         <filename>mod_b3_gallery.xml</filename>
         <filename module="mod_b3_gallery">mod_b3_gallery.php</filename>
         <filename>helper.php</filename>
         <filename>index.html</filename>
+        <filename>item.xml</filename>
         <folder>tmpl</folder>
     </files>
 
@@ -22,51 +25,27 @@
         <folder>js</folder>
     </media>
 
-	<languages>
-		<language tag="en-GB">en-GB.mod_b3_gallery.ini</language>
-		<language tag="pt-BR">pt-BR.mod_b3_gallery.ini</language>
-	</languages>
+    <languages>
+        <language tag="en-GB">en-GB.mod_b3_gallery.ini</language>
+        <language tag="pt-BR">pt-BR.mod_b3_gallery.ini</language>
+    </languages>
 
     <config>
         <fields name="params">
-            <fieldset name="basic">
-                <field name="images"
-                       type="repeatable"
-                       icon="images"
-                       description="MOD_B3_GALLERY_IMAGES_GALLERY_DESC"
+            <fieldset name="basic" addfieldpath="/administrator/components/com_content/models/fields">
+                <field name="gallery"
+                       type="subform"
+                       formsource="modules/mod_b3_gallery/item.xml"
+                       class="advancedSelect"
+                       min="1"
+                       multiple="true"
+                       layout="joomla.form.field.subform.repeatable"
+                       groupByFieldset="true"
                        label="MOD_B3_GALLERY_IMAGES_GALLERY_LABEL"
-                       filter="raw"
-                       default="{'ordering':'','image':'','subtitle':'','thumb':''}">
-                    <fields name="params">
-                        <fieldset hidden="true" name="images_modal" repeat="true">
-                            <field name="ordering"
-                                   type="integer"
-                                   default="1"
-                                   class="input-mini"
-                                   first="1"
-                                   last="999"
-                                   step="1" />
-                            <field name="image"
-                                   type="media"
-                                   preview="tooltip"
-                                   directory="images"
-                                   label="MOD_B3_GALLERY_IMAGE_FIELD_LABEL"
-                                   description="MOD_B3_GALLERY_IMAGE_FIELD_DESC" />
-                            <field name="subtitle"
-                                   type="text"
-                                   default=""
-                                   label="MOD_B3_GALLERY_SUBTITLE_FIELD_LABEL"
-                                   description="MOD_B3_GALLERY_SUBTITLE_FIELD_DESC" />
-                            <field name="thumb"
-                                   type="hidden" />
-                        </fieldset>
-                    </fields>
-                </field>
+                       description="MOD_B3_GALLERY_IMAGES_GALLERY_DESC" />
+            </fieldset>
 
-                <field name="myspacer"
-                       type="spacer"
-                       hr="true" />
-
+            <fieldset name="controls" label="MOD_B3_GALLERY_CONTROLS">
                 <field name="bootstrap"
                        type="radio"
                        class="btn-group btn-group-yesno radio"
@@ -81,16 +60,6 @@
                        default="col-xs-6 col-sm-4 col-md-3"
                        label="MOD_B3_GALLERY_COLUMNS_FIELD_LABEL"
                        description="MOD_B3_GALLERY_COLUMNS_FIELD_DESC" />
-
-                <field name="thumbnail"
-                       type="radio"
-                       class="btn-group btn-group-yesno radio"
-                       default="1"
-                       label="MOD_B3_GALLERY_AUTO_THUMBS_FIELD_LABEL"
-                       description="MOD_B3_GALLERY_AUTO_THUMBS_FIELD_DESC">
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
                 <field name="size"
                        type="text"
                        default="150"
