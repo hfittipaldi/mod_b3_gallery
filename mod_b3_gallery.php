@@ -17,9 +17,9 @@ defined('_JEXEC') or die;
 // Include the syndicate functions only once
 require_once __DIR__ . '/helper.php';
 
-$doc = JFactory::getDocument();
-$doc->addStyleSheet(JURI::base() . '/media/mod_b3_gallery/css/b3_gallery.css');
-$doc->addScript(JURI::base() . 'media/mod_b3_gallery/js/b3_gallery.js');
+JHtml::_('stylesheet', 'mod_b3_gallery/b3_gallery.css', ['relative' => true]);
+JHtml::_('script', 'mod_b3_gallery/b3_gallery.js', ['relative' => true]);
+
 
 /* Module */
 $module_id = $module->id;
