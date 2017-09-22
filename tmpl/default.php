@@ -86,7 +86,7 @@ if ($gallery !== null) :
 
                 <?php if ($counter !== false) : ?>
                 <div class="modal-footer">
-                    <div class="pull-right"><span id="counter-<?php echo $module_id; ?>">1</span> / <?php echo count($gallery); ?></div>
+                    <div class="pull-right"><span id="counter-<?php echo $module_id; ?>">1</span> / <?php echo count(get_object_vars($gallery)); ?></div>
                     <div id="caption-<?php echo $module_id; ?>" class="caption"><?php echo $captions[0]; ?></div>
                 </div>
                 <?php endif; ?>
