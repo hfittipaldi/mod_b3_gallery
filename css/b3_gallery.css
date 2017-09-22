@@ -20,14 +20,15 @@
         background-color: rgba(255,255,255,.7);
     }
 }
+.b3Gallery .carousel-inner .item {
+    margin: 0;
+    max-width: 100%;
+}
 .b3Gallery .carousel-fade .carousel-control {
     z-index: 2;
 }
 .b3Gallery .carousel-fade .carousel-inner .item {
     -webkit-transition-property: opacity;
-       -moz-transition-property: opacity;
-        -ms-transition-property: opacity;
-         -o-transition-property: opacity;
             transition-property: opacity;
 }
 .b3Gallery .carousel-fade .carousel-inner .item,
