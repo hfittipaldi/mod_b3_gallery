@@ -54,7 +54,7 @@ if ($gallery !== null) :
                             foreach ($gallery as $image) :
                                 $file = $image->image;
                                 list($width, $height) = getimagesize($file);
-                                $imgs_width[] = $width;
+                                $imgs_dimensions[$k] = '[' . $width . ', ' . $height . ']';
                             ?>
                             <figure class="item-<?php echo $module_id . '-' . $k;?> item<?php echo $k==0 ? ' active' : ''; ?>">
                                 <img src="<?php echo $file; ?>" alt="<?php echo $image->caption; ?>" />
@@ -96,7 +96,7 @@ if ($gallery !== null) :
 
     <script>
         jQuery('.b3Gallery-item').find('a').on('click', function() {
-            getItemIndex( <?php echo $module_id; ?>, [ <?php echo implode(', ', $imgs_width); ?> ], [ '<?php echo implode("', '", $captions); ?>' ] );
+            getItemIndex( jQuery(this).parent().attr('data-slide-to'), <?php echo $module_id; ?>, [ <?php echo implode(', ', $imgs_dimensions); ?> ], [ '<?php echo implode("', '", $captions); ?>' ] );
         });
     </script>
 

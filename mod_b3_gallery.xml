@@ -6,7 +6,7 @@
     <copyright>Copyright (C) 2017 Hugo Fittipaldi. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later</license>
     <authorEmail>hugo.fittipaldi@gmail.com</authorEmail>
-    <version>2.0.0-rc</version>
+    <version>2.0.0</version>
     <description>Place a Bootstrap 3 gallery in a module position.</description>
     <scriptfile>script.php</scriptfile>
 
@@ -22,6 +22,7 @@
     <media destination="mod_b3_gallery" folder="media">
         <file>index.html</file>
         <folder>css</folder>
+        <folder>images</folder>
         <folder>js</folder>
     </media>
 
