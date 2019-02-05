@@ -1,12 +1,12 @@
 <?php
 /**
- * B3 Gallery Module.
+ * B3 Gallery Module
  *
  * @package     Joomla.Site
  * @subpackage  mod_b3_gallery
  *
  * @author      Hugo Fittipaldi <hugo.fittipaldi@gmail.com>
- * @copyright   Copyright (C) 2017 Hugo Fittipaldi. All rights reserved.
+ * @copyright   Copyright (C) 2019 Hugo Fittipaldi. All rights reserved.
  * @license     GNU General Public License version 2 or later;
  * @link        https://github.com/hfittipaldi/mod_b3_gallery
  */
@@ -20,9 +20,7 @@ defined('_JEXEC') or die;
  * This class will be called by Joomla!'s installer,
  * and is used for custom automation actions in its installation process.
  *
- * @package     Joomla.Site
- * @subpackage  mod_b3_gallery
- * @since       2.0
+ * @since 2.0
  */
 class mod_b3_galleryInstallerScript
 {
@@ -95,32 +93,39 @@ class mod_b3_galleryInstallerScript
         echo '<br />Current PHP version = ' . phpversion() . '</p>';
 
         // Abort if the current Joomla release is older
-        if (version_compare($jversion->getShortVersion(), $this->minimum_joomla_release, 'lt'))
-        {
-            $app->enqueueMessage('Cannot install B3 Gallery Module in a Joomla release prior to ' . $this->minimum_joomla_release, 'warning');
+        if (version_compare($jversion->getShortVersion(), $this->minimum_joomla_release, 'lt')) {
+            $app->enqueueMessage(
+                'Cannot install B3 Gallery Module in a Joomla release prior to '. $this->minimum_joomla_release,
+                'warning'
+            );
             return false;
         }
 
         // Abort if the PHP version is not newer than the minimum PHP required version
-        if (version_compare(phpversion(), $this->minimum_php_version, 'lt'))
-        {
-            $app->enqueueMessage('Cannot install B3 Gallery Module in a PHP version prior to ' . $this->minimum_php_version, 'warning');
+        if (version_compare(phpversion(), $this->minimum_php_version, 'lt')) {
+            $app->enqueueMessage(
+                'Cannot install B3 Gallery Module in a PHP version prior to ' . $this->minimum_php_version,
+                'warning'
+            );
             return false;
         }
 
         // Abort if the module being installed is not newer than the currently installed version
-        if ($type == 'update')
-        {
+        if ($type == 'update') {
             $oldRelease = self::getParam('version');
             $rel = $oldRelease . ' to ' . $this->release;
-            if (version_compare($this->release, $oldRelease, 'lt'))
-            {
+            if (version_compare($this->release, $oldRelease, 'lt')) {
                 $app->enqueueMessage('Incorrect version sequence. Cannot upgrade ' . $rel, 'warning');
                 return false;
-            }
-
-            if (version_compare($oldRelease, '2.0', 'lt'))
-            {
+            } elseif (version_compare($oldRelease, '2.0', 'lt')) {
+                $app->enqueueMessage(
+                    'Incorrect version sequence. Cannot upgrade. You must install version 2.0 first.',
+                    'warning'
+                );
+                return false;
+            } elseif (version_compare($oldRelease, '2.1', 'lt')) {
+                self::delete(JPATH_SITE . '/modules/mod_b3_gallery');
+                self::delete(JPATH_SITE . '/media/mod_b3_gallery');
                 self::migrateData();
             }
         }
@@ -162,10 +167,14 @@ class mod_b3_galleryInstallerScript
      */
     public function updateManifestCache()
     {
+        $json  = '{"gallery":"{"image":"","thumb":"","caption":""}","version":"3.x","size":"150","counter":"1",';
+        $json .= '"autoslide":"1","transition":"0","interval":"5000","controls":"1","pause":"0","wrap":"1",';
+        $json .= '"keyboard":"1","cache":"1","cache_time":"900","cachemode":"static"}';
+
         $db = JFactory::getDbo();
         $query = $db->getQuery(true);
         $query->update($db->quoteName('#__extensions'))
-            ->set($db->quoteName('params') . ' = ' . $db->quote('{"gallery":"{"image":"","thumb":"","caption":""}","bootstrap":"1","columns":"col-xs-6 col-sm-4 col-md-3","size":"150","counter":"1","autoslide":"1","transition":"0","interval":"5000","controls":"1","pause":"1","wrap":"1","keyboard":"1","cache":"1","cache_time":"900","cachemode":"static"}'))
+            ->set($db->quoteName('params') . ' = ' . $db->quote($json))
             ->where($db->quoteName('element') . ' = ' . $db->quote('mod_b3_gallery'));
 
         $db->setQuery($query)
@@ -190,18 +199,15 @@ class mod_b3_galleryInstallerScript
             ->execute();
         $num_rows = $db->getNumRows();
 
-        if ($num_rows > 1)
-        {
+        if ($num_rows > 1) {
             $modules = $db->loadAssocList();
 
             // Select the required fields from the table.
             $query = $db->getQuery(true);
 
             $set = 'CASE id';
-            foreach ($modules as $module)
-            {
-                $params = json_decode($module['params']);
-                $set   .= ' WHEN ' . $module['id'] . ' THEN ' . $db->quote(self::_arrayToObject($params));
+            foreach ($modules as $module) {
+                $set   .= ' WHEN ' . $module['id'] . ' THEN ' . $db->quote(self::updateParams($module['params']));
                 $ids[] = $module['id'];
             }
             $set .= ' END';
@@ -212,18 +218,13 @@ class mod_b3_galleryInstallerScript
 
             $db->setQuery($query)
                 ->execute();
-        }
-        elseif ($num_rows == 1)
-        {
+        } elseif ($num_rows == 1) {
             $module = $db->loadAssoc();
-
-            $params = $module['params'];
-            $id     = $module['id'];
 
             $query = $db->getQuery(true);
             $query->update($db->quoteName('#__modules'))
-                ->set($db->quoteName('params') . ' = ' . $db->quote(self::_arrayToObject($params)))
-                ->where($db->quoteName('id') . ' = ' . $id);
+                ->set($db->quoteName('params') . ' = ' . $db->quote(self::updateParams($module['params'])))
+                ->where($db->quoteName('id') . ' = ' . $module['id']);
 
             $db->setQuery($query)
                 ->execute();
@@ -232,38 +233,17 @@ class mod_b3_galleryInstallerScript
         self::updateManifestCache();
     }
 
-    protected function _arrayToObject($params)
+    /**
+     * Update module params
+     * @param  json $params [[Description]]
+     * @return json [[Description]]
+     */
+    protected function updateParams($params)
     {
-        $array = self::_groupByKey($params->images);
+        $params = json_decode($params);
 
-        foreach($array as $key => $value)
-        {
-            foreach ($value as $property => $argument)
-            {
-                if ($property != 'ordering')
-                {
-                    if ($property == 'subtitle')
-                    {
-                        $property = 'caption';
-                    }
-
-                    if ($property == 'image')
-                    {
-                        $argument = self::_getImagePath($argument) . '/' . self::_cleanName($argument);
-                    }
-
-                    if ($property == 'thumb' && !empty($argument))
-                    {
-                        $argument = self::_getThumbPath($argument) . '/' . self::_cleanName($argument);
-                    }
-
-                    $result['gallery']['gallery' . $key][$property] = $argument;
-                }
-            }
-        }
-
-        $result['bootstrap']        = $params->bootstrap;
-        $result['columns']          = $params->columns;
+        $result['gallery']          = $params->gallery;
+        $result['version']          = '3.x';
         $result['size']             = $params->size;
         $result['counter']          = $params->counter;
         $result['autoslide']        = $params->autoslide;
@@ -287,105 +267,11 @@ class mod_b3_galleryInstallerScript
         return json_encode($result);
     }
 
-    /**
-     * Group an object by key
-     *
-     * @param   array  $json An object containing the item data
-     *
-     * @access public
-     */
-    protected function _groupByKey($json)
+    protected function delete($path)
     {
-        $return = null;
+        jimport('joomla.filesystem.folder');
+        jimport('joomla.filesystem.file');
 
-        $imagesJSON = json_decode($json);
-        if ($imagesJSON !== null)
-        {
-            foreach ($imagesJSON as $i => $sub)
-            {
-                foreach ($sub as $k => $v)
-                {
-                    $result[$k][$i] = $v;
-                }
-            }
-            $return = self::_columnsList($result);
-        }
-
-        return $return;
-    }
-
-    /**
-     * Retrieves the list of columns
-     *
-     * @param   array  $data An object containing the item data
-     *
-     * @access protected
-     */
-    protected function _columnsList($data)
-    {
-        foreach ($data as $key => $row)
-        {
-            $ordering[$key] = $row['ordering'];
-            $image[$key]    = $row['image'];
-        }
-
-        // Ordena os dados com ordering ascendente, main_image ascendente
-        // Adiciona $data como o último parâmetro, para ordenar pela chave comum
-        array_multisort($ordering, SORT_ASC, $image, SORT_ASC, $data);
-
-        return $data;
-    }
-
-    /**
-     * Checks if the selected directory exists
-     *
-     * @return  string
-     *
-     * @since   2.0
-     */
-    protected static function _getImagePath($path)
-    {
-        $pieces = explode('/', $path);
-        $image  = array_pop($pieces);
-
-        $dir_name = implode('/', $pieces);
-
-        return $dir_name;
-    }
-
-    /**
-     * Checks if the selected directory exists
-     *
-     * @return  string
-     *
-     * @since   2.0
-     */
-    protected static function _getThumbPath($path)
-    {
-        $thumbs_dir = self::_getImagePath($path) . '/thumbs';
-
-        if (!is_dir($thumbs_dir))
-        {
-            mkdir($thumbs_dir);
-        }
-
-        return $thumbs_dir;
-    }
-
-    /**
-     * Clean the name of the image
-     *
-     * @param   string  $file  Filename to sanitize
-     *
-     * @return  string
-     *
-     * @since   1.0
-     */
-    protected static function _cleanName($file)
-    {
-        $info = pathinfo($file);
-        $filename = basename($file, '.' . $info['extension']);
-
-        return JFilterOutput::stringURLSafe($filename) . '.' . $info['extension'];
+        JFolder::delete($path);
     }
 }

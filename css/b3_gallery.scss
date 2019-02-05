@@ -1,0 +1,130 @@
+.b3Gallery {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -1rem;
+
+    /*** Gallery ***/
+    .b3Gallery-item {
+        margin-bottom: 1rem;
+        margin-left: 1rem;
+
+        a {
+            display: block;
+
+            img {
+                width: 100%;
+            }
+        }
+    }
+
+    /*** Carousel ***/
+    .modal-dialog {
+        max-width: calc(100% - 1rem);
+
+        .modal-body {
+            background: url('../images/load.gif') center center no-repeat;
+
+            .carousel-inner {
+                figure {
+                    margin-bottom: 0;
+
+                    img {
+                        display: block;
+                        margin: 0 auto;
+                        max-width: 100%;
+                        height: auto;
+                    }
+
+                    figcaption {
+                        display: flex;
+                        flex-wrap: nowrap;
+                        justify-content: flex-end;
+                        align-items: flex-start;
+                        background-color: #fff;
+
+                        .caption,
+                        .counter {
+                            padding-top: 1rem;
+                        }
+
+                        .caption {
+                            flex-basis: 100%;
+                        }
+
+                        .counter {
+                            flex: 0 0 100px;
+                            text-align: right;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &.b3 {
+        margin-bottom: 1rem;
+
+        .modal-dialog {
+            margin-right: auto;
+            margin-left: auto;
+
+            .modal-header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                padding: 1rem;
+                border-bottom: 1px solid #e9ecef;
+                border-top-left-radius: 0.3rem;
+                border-top-right-radius: 0.3rem;
+
+                .modal-title {
+                    flex: 1;
+                }
+
+                .close {
+                    padding: 1rem;
+                    margin: -1rem -1rem -1rem auto;
+                }
+            }
+
+            .modal-body {
+                .carousel-fade {
+                    .carousel-control {
+                        z-index: 2;
+                    }
+
+                    .carousel-inner {
+                        .item,
+                        .active.left,
+                        .active.right {
+                            opacity: 0;
+                            visibility: hidden;
+                            transition-property: visibility, opacity;
+                            transition-delay: 1000ms;
+                        }
+
+                        .active,
+                        .next.left,
+                        .prev.right {
+                            opacity: 1;
+                            visibility: visible;
+                        }
+
+                        .next,
+                        .prev,
+                        .active.left,
+                        .active.right {
+                            left: 0;
+                            -webkit-transform: translate(0, 0);
+                                    transform: translate(0, 0);
+                        }
+
+                        .item img {
+                            margin: auto;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

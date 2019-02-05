@@ -3,24 +3,22 @@
     <name>B3 Gallery Module</name>
     <author>Hugo Fittipaldi</author>
     <creationDate>May 2016</creationDate>
-    <copyright>Copyright (C) 2017 Hugo Fittipaldi. All rights reserved.</copyright>
+    <copyright>Copyright (C) 2019 Hugo Fittipaldi. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later</license>
     <authorEmail>hugo.fittipaldi@gmail.com</authorEmail>
-    <version>2.0.0</version>
-    <description>Place a Bootstrap 3 gallery in a module position.</description>
+    <version>2.1</version>
+    <description>Place a Bootstrap 3.x/4.x gallery in a module position.</description>
     <scriptfile>script.php</scriptfile>
 
     <files>
-        <filename>mod_b3_gallery.xml</filename>
         <filename module="mod_b3_gallery">mod_b3_gallery.php</filename>
-        <filename>helper.php</filename>
-        <filename>index.html</filename>
-        <filename>item.xml</filename>
         <folder>tmpl</folder>
+        <filename>helper.php</filename>
+        <filename>item.xml</filename>
+        <filename>mod_b3_gallery.xml</filename>
     </files>
 
     <media destination="mod_b3_gallery" folder="media">
-        <file>index.html</file>
         <folder>css</folder>
         <folder>images</folder>
         <folder>js</folder>
@@ -34,6 +32,9 @@
     <config>
         <fields name="params">
             <fieldset name="basic" addfieldpath="/administrator/components/com_content/models/fields">
+                <field name="info"
+                       type="spacer"
+                       label="MOD_B3_GALLERY_INFO_LABEL" />
                 <field name="gallery"
                        type="subform"
                        formsource="modules/mod_b3_gallery/item.xml"
@@ -47,23 +48,17 @@
             </fieldset>
 
             <fieldset name="controls" label="MOD_B3_GALLERY_CONTROLS">
-                <field name="bootstrap"
-                       type="radio"
-                       class="btn-group btn-group-yesno radio"
-                       default="1"
-                       label="MOD_B3_GALLERY_BOOTSTRAP_FIELD_LABEL"
-                       description="MOD_B3_GALLERY_BOOTSTRAP_FIELD_DESC">
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
+                <field name="version"
+                       type="list"
+                       default="4.x"
+                       label="MOD_B3_GALLERY_BOOTSTRAP_VERSION_LABEL"
+                       description="MOD_B3_GALLERY_BOOTSTRAP_VERSION_DESC">
+                    <option value="4.x">4.x</option>
+                    <option value="3.x">3.x</option>
                 </field>
-                <field name="columns"
-                       type="text"
-                       default="col-xs-6 col-sm-4 col-md-3"
-                       label="MOD_B3_GALLERY_COLUMNS_FIELD_LABEL"
-                       description="MOD_B3_GALLERY_COLUMNS_FIELD_DESC" />
                 <field name="size"
                        type="text"
-                       default="150"
+                       default="260"
                        label="MOD_B3_GALLERY_THUMBS_SIZE_FIELD_LABEL"
                        description="MOD_B3_GALLERY_THUMBS_SIZE_FIELD_DESC" />
                 <field name="counter"
@@ -87,6 +82,22 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
+                <field name="interval"
+                       type="text"
+                       default="5000"
+                       showon="autoslide:1"
+                       label="MOD_B3_GALLERY_INTERVAL_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_INTERVAL_FIELD_DESC" />
+                <field name="pause"
+                       type="radio"
+                       class="btn-group btn-group-yesno radio"
+                       default="0"
+                       showon="autoslide:1"
+                       label="MOD_B3_GALLERY_PAUSE_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_PAUSE_FIELD_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
                 <field name="transition"
                        type="list"
                        default="0"
@@ -95,11 +106,6 @@
                     <option value="0">Default</option>
                     <option value="1">Fade</option>
                 </field>
-                <field name="interval"
-                       type="text"
-                       default="5000"
-                       label="Interval"
-                       description="The amount of time to delay between automatically cycling an item." />
                 <field name="controls"
                        type="radio"
                        class="btn-group btn-group-yesno radio"
@@ -109,12 +115,13 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="pause"
+                <field name="keyboard"
                        type="radio"
                        class="btn-group btn-group-yesno radio"
                        default="1"
-                       label="MOD_B3_GALLERY_PAUSE_FIELD_LABEL"
-                       description="MOD_B3_GALLERY_PAUSE_FIELD_DESC">
+                       showon="controls:1"
+                       label="MOD_B3_GALLERY_KEYBOARD_CONTROL_FIELD_LABEL"
+                       description="MOD_B3_GALLERY_KEYBOARD_CONTROL_FIELD_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
@@ -124,15 +131,6 @@
                        default="1"
                        label="MOD_B3_GALLERY_CAROUSEL_LOOP_FIELD_LABEL"
                        description="MOD_B3_GALLERY_CAROUSEL_LOOP_FIELD_DESC">
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
-                <field name="keyboard"
-                       type="radio"
-                       class="btn-group btn-group-yesno radio"
-                       default="1"
-                       label="MOD_B3_GALLERY_KEYBOARD_CONTROL_FIELD_LABEL"
-                       description="MOD_B3_GALLERY_KEYBOARD_CONTROL_FIELD_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>

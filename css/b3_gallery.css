@@ -1,59 +1,81 @@
-.b3Gallery .carousel,
-.b3Gallery .carousel-inner,
-.b3Gallery .carousel-inner .item {
-    height: 100%;
-}
-.b3Gallery .carousel-caption {
-    bottom: 0;
-    right: 0;
-    left: 0;
-    padding: 20px 15px;
-    text-shadow: 0 1px 2px rgba(0,0,0,.2);
-}
-@media (min-width: 768px) {
-    .b3Gallery .carousel-caption {
-        color: #313131;
-        background-color: rgba(255,255,255,.7);
-    }
-}
-.b3Gallery .caption {
-    padding-right: 100px;
-    text-align: left;
-}
-.b3Gallery .modal-body {
-    background: url('../images/load.gif') center center no-repeat;
-}
-.b3Gallery .carousel-inner .item {
-    margin: 0;
-    max-width: 100%;
-}
-.b3Gallery .carousel-fade .carousel-control {
-    z-index: 2;
-}
-.b3Gallery .carousel-fade .carousel-inner .item,
-.b3Gallery .carousel-fade .carousel-inner .active.left,
-.b3Gallery .carousel-fade .carousel-inner .active.right {
-    opacity: 0;
-    visibility: hidden;
-    -webkit-transition-property: visibility, opacity;
-            transition-property: visibility, opacity;
-    -webkit-transition-delay: 1000ms;
-            transition-delay: 1000ms;
-}
-.b3Gallery .carousel-fade .carousel-inner .active,
-.b3Gallery .carousel-fade .carousel-inner .next.left,
-.b3Gallery .carousel-fade .carousel-inner .prev.right {
-    opacity: 1;
-    visibility: visible;
-}
-.b3Gallery .carousel-fade .carousel-inner .next,
-.b3Gallery .carousel-fade .carousel-inner .prev,
-.b3Gallery .carousel-fade .carousel-inner .active.left,
-.b3Gallery .carousel-fade .carousel-inner .active.right {
-    left: 0;
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
-}
-.b3Gallery .carousel-fade .carousel-inner .item img {
-    margin: auto;
-}
+.b3Gallery {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -1rem;
+  /*** Gallery ***/
+  /*** Carousel ***/ }
+  .b3Gallery .b3Gallery-item {
+    margin-bottom: 1rem;
+    margin-left: 1rem; }
+    .b3Gallery .b3Gallery-item a {
+      display: block; }
+      .b3Gallery .b3Gallery-item a img {
+        width: 100%; }
+  .b3Gallery .modal-dialog {
+    max-width: calc(100% - 1rem); }
+    .b3Gallery .modal-dialog .modal-body {
+      background: url("../images/load.gif") center center no-repeat; }
+      .b3Gallery .modal-dialog .modal-body .carousel-inner figure {
+        margin-bottom: 0; }
+        .b3Gallery .modal-dialog .modal-body .carousel-inner figure img {
+          display: block;
+          margin: 0 auto;
+          max-width: 100%;
+          height: auto; }
+        .b3Gallery .modal-dialog .modal-body .carousel-inner figure figcaption {
+          display: flex;
+          flex-wrap: nowrap;
+          justify-content: flex-end;
+          align-items: flex-start;
+          background-color: #fff; }
+          .b3Gallery .modal-dialog .modal-body .carousel-inner figure figcaption .caption,
+          .b3Gallery .modal-dialog .modal-body .carousel-inner figure figcaption .counter {
+            padding-top: 1rem; }
+          .b3Gallery .modal-dialog .modal-body .carousel-inner figure figcaption .caption {
+            flex-basis: 100%; }
+          .b3Gallery .modal-dialog .modal-body .carousel-inner figure figcaption .counter {
+            flex: 0 0 100px;
+            text-align: right; }
+  .b3Gallery.b3 {
+    margin-bottom: 1rem; }
+    .b3Gallery.b3 .modal-dialog {
+      margin-right: auto;
+      margin-left: auto; }
+      .b3Gallery.b3 .modal-dialog .modal-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        border-top-left-radius: 0.3rem;
+        border-top-right-radius: 0.3rem; }
+        .b3Gallery.b3 .modal-dialog .modal-header .modal-title {
+          flex: 1; }
+        .b3Gallery.b3 .modal-dialog .modal-header .close {
+          padding: 1rem;
+          margin: -1rem -1rem -1rem auto; }
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-control {
+        z-index: 2; }
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-inner .item,
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-inner .active.left,
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-inner .active.right {
+        opacity: 0;
+        visibility: hidden;
+        transition-property: visibility, opacity;
+        transition-delay: 1000ms; }
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-inner .active,
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-inner .next.left,
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-inner .prev.right {
+        opacity: 1;
+        visibility: visible; }
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-inner .next,
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-inner .prev,
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-inner .active.left,
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-inner .active.right {
+        left: 0;
+        -webkit-transform: translate(0, 0);
+        transform: translate(0, 0); }
+      .b3Gallery.b3 .modal-dialog .modal-body .carousel-fade .carousel-inner .item img {
+        margin: auto; }
+
+/*# sourceMappingURL=b3_gallery.css.map */

@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
-    <fieldset name="image">
+    <fieldset name="image" addfieldpath="/plugins/system/jce/fields">
         <field name="image"
-               type="media"
-               preview="tooltip"
-               directory=""
-               required="true"
+               type="mediajce"
                label="MOD_B3_GALLERY_IMAGE_FIELD_LABEL"
-               description="MOD_B3_GALLERY_IMAGE_FIELD_DESC" />
+               description="MOD_B3_GALLERY_IMAGE_FIELD_DESC"
+               filter="jpg,jpeg,png" />
         <field name="thumb"
-               type="media"
-               preview="tooltip"
-               directory=""
+               type="mediajce"
                label="MOD_B3_GALLERY_THUMB_FIELD_LABEL"
-               description="MOD_B3_GALLERY_THUMB_FIELD_DESC" />
+               description="MOD_B3_GALLERY_THUMB_FIELD_DESC"
+               filter="jpg,jpeg,png" />
         <field name="caption"
                type="text"
-               default=""
                label="MOD_B3_GALLERY_CAPTION_FIELD_LABEL"
                description="MOD_B3_GALLERY_CAPTION_FIELD_DESC" />
     </fieldset>

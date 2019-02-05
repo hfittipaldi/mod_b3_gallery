@@ -1,54 +1,42 @@
 /*jslint browser: true*/
-/*global jQuery, window, document*/
-function viewport() {
-    'use strict';
-    var e = window,
-        a = 'inner';
-    if (!window.hasOwnProperty('innerWidth')) {
-        a = 'client';
-        e = document.documentElement || document.body;
-    }
-    return { width: e[a + 'Width'], height: e[a + 'Height'] };
-}
+/*global jQuery*/
 
 function resizeModal(id, tam, first) {
     'use strict';
-    var win_size   = viewport(),
-        view       = win_size.width,
-        modal      = jQuery('#galleryModal-' + id),
+    var modal      = jQuery('#galleryModal-' + id),
         modal_body = modal.find('.modal-body'),
-        pad_top    = parseInt(modal_body.css('padding-top'), 0),
         pad_right  = parseInt(modal_body.css('padding-right'), 0),
-        pad_bottom = parseInt(modal_body.css('padding-bottom'), 0),
         pad_left   = parseInt(modal_body.css('padding-left'), 0),
-        nWidth     = tam[0] + pad_left + pad_right + 2 + 'px',
-        nHeight    = tam[1] + pad_top + pad_bottom + 'px';
+        nWidth     = tam[0] + pad_left + pad_right + 2,
+        carousel   = jQuery('#carousel-' + id),
+        active     = carousel.find('figure.active');
 
-    if (view > 767) {
-        if (first === true) {
-            modal.find('.modal-dialog').css({width: nWidth});
-            modal_body.css({height: nHeight});
-        } else {
-            modal.find('.modal-dialog').animate({width: nWidth}, 400);
-            modal_body.animate({height: nHeight}, 400);
-        }
+    if (first === true) {
+        modal.on('shown.bs.modal', function () {
+            var imgHeight = active.find('img').height();
+            modal.find('a[data-slide]').height(imgHeight);
+        }).find('.modal-dialog').css({width: nWidth + 'px'});
+    } else {
+        modal.find('.modal-dialog').animate({width: nWidth + 'px'}, 400, function () {
+            var imgHeight = active.find('img').height();
+            modal.find('a[data-slide]').height(imgHeight);
+        });
     }
+
+    modal.focus(function () {
+        carousel.find('a[data-slide="next"]').focus();
+    });
 }
 
-function getItemIndex(index, id, imgs_dimensions, subtitles) {
+function getItemIndex(index, id, imgs_dimensions) {
     'use strict';
     var carousel = jQuery('#carousel-' + id);
 
     resizeModal(id, imgs_dimensions[index], true);
 
     carousel.on('slid.bs.carousel', function () {
-        var index = jQuery(carousel).find('figure.active').index(),
-            currentIndex = index + 1,
-            tam = imgs_dimensions[index];
+        var index = carousel.find('figure.active').index();
 
-        jQuery('#counter-' + id).text(currentIndex);
-        jQuery('#caption-' + id).text(subtitles[index]);
-
-        resizeModal(id, tam);
+        resizeModal(id, imgs_dimensions[index]);
     });
 }

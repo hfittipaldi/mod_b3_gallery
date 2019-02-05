@@ -6,55 +6,60 @@
  * @subpackage  mod_b3_gallery
  *
  * @author      Hugo Fittipaldi <hugo.fittipaldi@gmail.com>
- * @copyright   Copyright (C) 2016 Hugo Fittipaldi. All rights reserved.
+ * @copyright   Copyright (C) 2019 Hugo Fittipaldi. All rights reserved.
  * @license     GNU General Public License version 2 or later;
  * @link        https://github.com/hfittipaldi/mod_b3_gallery
  */
 
-// no direct access
+// No direct access
 defined('_JEXEC') or die;
 
-// Include the syndicate functions only once
-require_once __DIR__ . '/helper.php';
+// Include the related items functions only once
+JLoader::register('B3GalleryHelper', __DIR__ . '/helper.php');
 
-JHtml::_('stylesheet', 'mod_b3_gallery/b3_gallery.css', ['relative' => true]);
-JHtml::_('script', 'mod_b3_gallery/b3_gallery.js', ['relative' => true]);
+JHtml::_('stylesheet', 'mod_b3_gallery/b3_gallery.css', array('relative' => true));
+JHtml::_('bootstrap.framework');
+JHtml::_('script', 'mod_b3_gallery/b3_gallery.js', array('relative' => true));
 
 
 /* Module */
 $module_id = $module->id;
-$mod_title = $module->title;
+$mod_title = htmlspecialchars($module->title, ENT_COMPAT, 'UTF-8');
 
 /* Params */
-$size      = (int) $params->get('size', 150);
-$bootstrap = (int) $params->get('bootstrap', 1);
-$columns   = (string) $params->get('columns', '');
-$counter   = (bool) $params->get('counter', true);
+$moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx'), ENT_COMPAT, 'UTF-8');
+$size    = (int) $params->get('size', 260);
+$counter = (bool) $params->get('counter', true);
 
-$row  = '';
-$cols = 'pull-left';
-if ($bootstrap === 1)
-{
-    $row  =  ' row';
-    $cols = $columns !== '' ? $columns : 'col-xs-6 col-sm-4 col-md-3';
+/* Carousel modal params */
+if ($params->get('autoslide', 1)) {
+    $interval = (int) $params->get('interval', 5000);
+    $interval = $interval !== 5000 ? ' data-interval="' . $interval . '"' : '';
+    $interval = ' data-ride="carousel"' . $interval;
+    $pause    = (int) $params->get('pause') !== 1 ? ' data-pause="false"' : '';
 }
-
-/* Modal params */
-$autoslide  = (int) $params->get('autoslide', 1);
-$interval   = (int) $params->get('interval', 5000);
-
 $transition = (int) $params->get('transition', 0);
 $transition = $transition !== 0 ? ' carousel-fade' : '';
+if ($controls = (int) $params->get('controls', 1)) {
+    $keyboard = (int) $params->get('keyboard') !== 1 ? ' data-keyboard="false"' : '';
+}
+$wrap = (int) $params->get('wrap') !== 1 ? ' data-wrap="false"' : '';
 
-$interval   = $interval !== 5000 ? ' data-interval="' . $interval . '"' : '';
-$interval   = $autoslide !== 0 ? $interval : ' data-interval="false"';
+$version  = '';
+$item     = 'carousel-';
+$ctrlNext = 'carousel-control-next';
+$ctrlPrev = 'carousel-control-prev';
+$spanNext = 'carousel-control-next-icon';
+$spanPrev = 'carousel-control-prev-icon';
+if ($params->get('version') === '3.x') {
+    $version  = ' b3';
+    $item     = '';
+    $ctrlNext = 'right carousel-control';
+    $ctrlPrev = 'left carousel-control';
+    $spanNext = 'glyphicon glyphicon-chevron-right';
+    $spanPrev = 'glyphicon glyphicon-chevron-left';
+}
 
-$controls   = (int) $params->get('controls', 1);
-
-$pause      = (int) $params->get('pause') !== 1 ? ' data-pause="false"' : '';
-$wrap       = (int) $params->get('wrap') !== 1 ? ' data-wrap="false"' : '';
-$keyboard   = (int) $params->get('keyboard') !== 1 ? ' data-keyboard="false"' : '';
-
-$gallery = modB3GalleryHelper::getGallery($params, $module_id);
+$gallery = B3GalleryHelper::getGallery($params, $module_id);
 
 require JModuleHelper::getLayoutPath('mod_b3_gallery', $params->get('layout', 'default'));
