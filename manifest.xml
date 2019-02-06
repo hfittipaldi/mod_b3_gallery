@@ -2,8 +2,8 @@
 <updates>
     <update>
         <name>B3 Gallery Module</name>
-        <description>This is mod_b3_gallery version 2.1</description>
-        <element>mod_b3_carousel</element>
+        <description>This is B3 Gallery Module version 2.1</description>
+        <element>mod_b3_gallery</element>
         <type>module</type>
         <version>2.1</version>
         <downloads>
